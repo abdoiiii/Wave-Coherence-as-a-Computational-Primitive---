@@ -106,7 +106,7 @@ This returns values in [0, 360), preserving directionality that shortest-path di
 
 ### 3.1 Implementation
 
-The test program is implemented in Rust (edition 2021) with zero external dependencies. Complex64 arithmetic is reduced to f64 angle storage with cos/sin operations. The program consists of four modules:
+The test program is implemented in Rust (edition 2024) with zero external dependencies. Complex64 arithmetic is reduced to f64 angle storage with cos/sin operations. The program consists of four modules:
 
 | Module | Purpose | Lines |
 |--------|---------|-------|
@@ -464,7 +464,7 @@ The hypothesis holds. The next step is building the database layer.
 
 ## Appendix A: Reproduction
 
-The test program requires only a Rust toolchain (edition 2021, no external dependencies):
+The test program requires only a Rust toolchain (edition 2024, no external dependencies):
 
 ```
 cargo new wave-test

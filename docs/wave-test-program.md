@@ -30,7 +30,7 @@ wave-test/
 [package]
 name = "wave-test"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 # num-complex for Complex64 - or just use (f64, f64) tuple, zero deps

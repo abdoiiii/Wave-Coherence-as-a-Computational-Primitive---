@@ -60,7 +60,7 @@ Test 10: PASS  (Broad: 3 targets, Narrow: 1 target, same position)
 ALL TESTS PASSED
 ```
 
-Requires only a Rust toolchain (edition 2021). No external dependencies.
+Requires only a Rust toolchain (edition 2024). No external dependencies.
 
 ## Key Results
 
