@@ -440,7 +440,9 @@ This advantage grows with relationship density. For n=6 (60 relationships), a si
 
 ### 5.5 Limitations
 
-**Bucket collisions.** Two semantically distinct values that hash to the same bucket are indistinguishable. This is the same limitation as any hash-based index, but with the added constraint that nearby hash values also have high coherence. Bucket count must be chosen to provide sufficient separation for the expected value space.
+**Bucket collisions at a single harmonic.** Two semantically distinct values that hash to the same bucket are indistinguishable *at that harmonic*. However, this limitation is resolvable without increasing bucket count. By the Fourier uniqueness theorem, a function is completely determined by its full set of Fourier coefficients — no two distinct values can produce the same coherence response across ALL harmonics. Each value has a unique *harmonic fingerprint*: the pattern of coherence scores across harmonics n=1, 2, 3, ... to infinity. Even if two values collide at harmonic 1, their fingerprints diverge at some higher harmonic. This is analogous to musical timbre — a trumpet and violin playing the same note are identical at the fundamental frequency, but their overtone profiles are unique.
+
+The practical implication: collision resolution doesn't require more buckets. It requires checking more harmonics. Instead of making the circle bigger, you listen more carefully to the same circle. The query planner gains a disambiguation operation: if a single-harmonic scan returns ambiguous results, run the same scan at higher harmonics until the fingerprints diverge. No extra data structures — just more passes of the same `cos(n * delta)` function with increasing n.
 
 **O(n) scan.** The current implementation scans all entities in the field for every query. At scale, this requires indexing — likely a spatial index on the encoded angles (e.g., angular buckets or a phase-aware tree structure). The math is sound, but the naieve implementation does not outperform a linear scan because it IS a linear scan with a different comparison operator.
 

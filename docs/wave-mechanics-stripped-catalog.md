@@ -345,8 +345,11 @@ Every operation the engine needs, with its computational signature:
 | 12 | Compound pattern | field, pattern_def | Vec<entity_id> | O(n × clauses) |
 | 13 | Multi-field join | fields[], join condition | Vec<tuple> | O(n × m) |
 | 14 | Resolution re-bucket | phase, source_tier, target_tier | phase | O(1) |
+| 15 | Harmonic disambiguation | ambiguous candidates, max_n | unique entity_id | O(k × max_n) |
 
 **Key observation:** Operations 1–6 are all variations of the same core math: complex number multiplication and angle comparison. The engine's inner loop is tiny. Everything else is configuration.
+
+**Operation 15 note:** When a single-harmonic scan returns multiple candidates with identical coherence (bucket collision), higher harmonics disambiguate them. Each value has a unique *harmonic fingerprint* — the vector of coherence scores across harmonics 1, 2, ..., n. By the Fourier uniqueness theorem, no two distinct values produce the same fingerprint across all harmonics. Collision resolution scales by analysis depth (more harmonics), not storage (more buckets).
 
 ---
 
