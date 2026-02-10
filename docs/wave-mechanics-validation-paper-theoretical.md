@@ -34,6 +34,14 @@ We hypothesize that encoding attribute values as angles on the unit circle and u
 
 **Claim 3 (Composability):** The geometric core composes with non-geometric operations (structural pairing, directed cycles, typed reach, multi-attribute conjunction) without interference.
 
+### 1.2.1 What is and is not claimed as novel
+
+The mathematical operations used here — cosine similarity, harmonic decomposition, phase encoding on the unit circle — are well-established. They are the foundation of Fourier analysis, which has been in use since the early 1800s across signal processing, physics, telecommunications, and many other fields. We do not claim novelty for any of these mathematical operations.
+
+What we validate is a specific *application*: using harmonic coherence as a database query operator to detect multiple relationship types through a single parameterized function, replacing explicit JOIN operations in relationship-dense schemas. We also present a catalog of structural relationship types (symmetric, asymmetric, directed, structural, compound) derived from cross-tradition geometric analysis, unified on the phase-encoding substrate.
+
+The contribution, if any, is in the combination: established mathematical tools applied to a problem domain (relational query algebra) where they do not appear to have been previously used in this way.
+
 ### 1.3 Scope
 
 This paper validates the mathematical foundation only. We do not address indexing strategies, storage formats, query planning, or performance at scale. Those are engineering concerns contingent on the math being sound. If the math fails, no engineering can save it.
@@ -440,9 +448,9 @@ This advantage grows with relationship density. For n=6 (60 relationships), a si
 
 ### 5.5 Limitations
 
-**Bucket collisions at a single harmonic.** Two semantically distinct values that hash to the same bucket are indistinguishable *at that harmonic*. However, this limitation is resolvable without increasing bucket count. By the Fourier uniqueness theorem, a function is completely determined by its full set of Fourier coefficients — no two distinct values can produce the same coherence response across ALL harmonics. Each value has a unique *harmonic fingerprint*: the pattern of coherence scores across harmonics n=1, 2, 3, ... to infinity. Even if two values collide at harmonic 1, their fingerprints diverge at some higher harmonic. This is analogous to musical timbre — a trumpet and violin playing the same note are identical at the fundamental frequency, but their overtone profiles are unique.
+**Bucket collisions at a single harmonic.** Two semantically distinct values that hash to the same bucket are indistinguishable at any single harmonic — this is the same limitation as any hash-based index. However, if the two values produce genuinely different angles (θ_a ≠ θ_b), they should be distinguishable at some higher harmonic n, because cos(n × θ_a) and cos(n × θ_b) must diverge for sufficiently large n if θ_a ≠ θ_b. Each distinct angle would have a unique "harmonic fingerprint" across the full set of integer harmonics — analogous to how two musical instruments playing the same note are distinguished by their overtone profiles, not by the fundamental frequency alone.
 
-The practical implication: collision resolution doesn't require more buckets. It requires checking more harmonics. Instead of making the circle bigger, you listen more carefully to the same circle. The query planner gains a disambiguation operation: if a single-harmonic scan returns ambiguous results, run the same scan at higher harmonics until the fingerprints diverge. No extra data structures — just more passes of the same `cos(n * delta)` function with increasing n.
+This suggests that collision resolution can be achieved by probing additional harmonics rather than increasing bucket count — scaling analysis depth rather than storage. We believe this follows from the uniqueness theorem in Fourier analysis (a function on the circle is completely determined by its Fourier coefficients), but this specific application of Fourier uniqueness to hash collision resolution has not been independently verified by a mathematician and should be treated as a conjecture pending review. Bucket count should still be chosen to provide sufficient separation for the expected value space as a practical measure.
 
 **O(n) scan.** The current implementation scans all entities in the field for every query. At scale, this requires indexing — likely a spatial index on the encoded angles (e.g., angular buckets or a phase-aware tree structure). The math is sound, but the naieve implementation does not outperform a linear scan because it IS a linear scan with a different comparison operator.
 

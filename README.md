@@ -16,10 +16,26 @@ This work emerged from an unconventional observation: multiple ancient tradition
 
 The key theoretical insights:
 
-1. **Harmonic coherence is a universal relationship operator.** One function, parameterized by frequency, detects any angular relationship. No relationship-specific code paths needed.
+1. **Harmonic coherence (an established Fourier operation) works as a universal relationship operator for database queries.** One function, parameterized by frequency, detects any angular relationship. No relationship-specific code paths needed.
 2. **Some relationships are non-geometric.** Structural pairings exist independent of angular distance, requiring explicit lookup tables alongside the geometric engine.
 3. **Harmonics are infinite.** The relationship detection capacity is unbounded — not limited to a fixed set of patterns. The geometric invariants (symmetry groups on circles) remain valid at every frequency.
 4. **The same primitives that work for database queries map onto LLM attention mechanisms.** Transformers effectively discover wave-like structure through training. Pre-building that structure as the computational substrate could improve efficiency and reasoning capability.
+
+## What Is and Is Not New
+
+**Not new (established mathematics):**
+- The equation `cos(n × (θ_a - θ_b))` — this is harmonic coherence, a standard operation in Fourier analysis, known since the 1800s
+- Phase encoding values on the unit circle — standard technique in signal processing
+- Fourier uniqueness — the theorem that distinct functions have distinct Fourier coefficients
+- Cosine similarity as a comparison measure — widely used across many fields
+
+**Potentially new (the application and synthesis):**
+- Using harmonic coherence as a database query operator, replacing JOINs with frequency-parameterized scans
+- The geometric relationship catalog — a comprehensive taxonomy of relationship types (symmetric, asymmetric, directed, structural, compound) derived from cross-civilizational analysis of circle-division systems, stripped of interpretive layers
+- Harmonic fingerprinting for collision resolution — using multi-harmonic probing to disambiguate phase-encoded values (pending mathematical verification)
+- The proposal that these primitives could serve as a substrate for LLM attention mechanisms
+
+We make no claim of having discovered new mathematics. The contribution, if any, is in recognising that established mathematical tools solve a specific class of problems (relationship-dense queries) more elegantly than the methods currently used, and in compiling the relationship type catalog that defines what the tools can express.
 
 ## Documents
 
