@@ -7,7 +7,7 @@ A validated mathematical framework that uses phase encoding on the unit circle a
 The framework includes:
 
 - **A geometric relationship catalog** — every structural relationship pattern discoverable on a phase circle, stripped of all domain-specific interpretation, expressed as pure mathematics
-- **A validation paper** — 10 tests, 3 corrective findings, all passing, with reproducible Rust code
+- **A validation paper** — 13 tests, 3 corrective findings, all passing, with reproducible Rust code
 - **An architecture proposal** — applying wave mechanics as a substrate for LLM attention and knowledge representation
 
 ## Origin
@@ -43,10 +43,10 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 |------|-------------|
 | `docs/geometric-relationship-catalog.md` | Complete catalog of geometric relationship patterns across all source traditions (5 traditions, 26 division systems, 35+ relationship types) |
 | `docs/wave-mechanics-stripped-catalog.md` | Pure mathematical specification — all domain-specific interpretation removed, only structural geometry remains |
-| `docs/wave-test-program.md` | Test program specification — 10 tests validating the core math |
+| `docs/wave-test-program.md` | Test program specification — 13 tests validating the core math |
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
 | `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, three corrective findings from running the code |
-| `src/` | Rust source code for the validation test suite (~530 lines, zero dependencies) |
+| `src/` | Rust source code for the validation test suite (~800 lines, zero dependencies) |
 
 ## Reproduce the Validation
 
@@ -71,8 +71,11 @@ Test 7:  PASS  (Structural pairs independent of geometry)
 Test 8:  PASS  (Wave scan = linear scan, 10/10 matches identical)
 Test 9:  PASS  (Single scan found 75 entities across 3 groups)
 Test 10: PASS  (Broad: 3 targets, Narrow: 1 target, same position)
+Test 11: PASS  (Harmonic fingerprinting: predicted n matches actual at 2°, 1°, 0.1°)
+Test 12: PASS  (Mutual amplification: ordering and ratios exact)
+Test 13: PASS  (5-node cycle: 20/20 pairs, 4 types × 5, zero conflicts)
 
-=== RESULTS: 10 passed, 0 failed out of 10 ===
+=== RESULTS: 13 passed, 0 failed out of 13 ===
 ALL TESTS PASSED
 ```
 
@@ -81,6 +84,8 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 ## Key Results
 
 **Test 9 is the critical result.** A single harmonic coherence scan (`cos(3 * delta)`) found 75 related entities across 3 groups in one pass. The equivalent SQL requires 2-3 JOINs and an explicit relation table. The wave model discovers relationships from geometry; the relational model must enumerate them.
+
+**Test 11 validates harmonic fingerprinting.** Bucket collisions are resolvable by probing higher harmonics. The required harmonic has a closed-form formula: `n = ⌈arccos(t) / Δθ⌉`. Predicted matched actual exactly at 2° (n=13), 1° (n=26), and 0.1° (n=259). Collision resolution scales by analysis depth, not storage.
 
 **Three corrective findings tighten the design:**
 
