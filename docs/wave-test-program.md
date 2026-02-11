@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A small Rust program (~300 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
+A Rust program (~1030 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
 - Encode values as complex numbers
 - Compute coherence
 - Check if harmonic detection actually works
@@ -336,6 +336,116 @@ Test with "narrow" type from position 0°:
 Pass condition: Same position, different type, different results.
 ```
 
+### Test 11: Harmonic Fingerprint Disambiguation
+
+```
+Setup:
+  - Two phases at 5° and 7° (2° apart)
+  - Scan harmonics n=1 through n=90
+  - Look for first harmonic where coherence drops below 0.9
+
+Expected:
+  - At n=1, coherence ≈ 0.9994 (nearly indistinguishable)
+  - At higher n, the 2° difference gets amplified (n × 2°)
+  - Eventually coherence drops below threshold
+  - Repeat with 1° apart and 0.1° apart
+  - Divergence harmonic follows formula: n = ⌈arccos(t) / Δθ⌉
+
+Pass condition: All three angular differences eventually diverge.
+Divergence ordering: smaller Δθ requires higher n. Predicted n matches actual.
+```
+
+### Test 12: Mutual Reference Amplification
+
+```
+Setup:
+  - Two phases at 30° and 35° (5° apart)
+  - Three reference patterns:
+    - Mutual (A↔B): coherence × 1.5
+    - One-way (A→B): coherence × 1.2
+    - No reference: coherence × 1.0
+
+Expected:
+  - Mutual score > one-way score > no-ref score
+  - Amplification ratios exactly 1.50 and 1.20
+
+Pass condition: Ordering preserved, ratios exact.
+```
+
+### Test 13: Exhaustive 5-Node Cycle Relationship Uniqueness
+
+```
+Setup:
+  - 5-node directed cycle with steps +1, +2, -1, -2
+  - For every ordered pair (a, b) where a ≠ b, determine which step takes a to b
+
+Expected:
+  - 20 ordered pairs total (5 × 4)
+  - Each pair maps to exactly one step (no conflicts)
+  - Each step type has exactly 5 pairs (uniform distribution)
+  - The relationship matrix is a circulant
+
+Pass condition: 20/20 pairs assigned, 4 types × 5 pairs, zero conflicts.
+```
+
+### Test 14: Harmonic Orthogonality (No Cross-Talk)
+
+```
+Setup:
+  - 10 entities at angles significant to different harmonics:
+    0°, 60°, 72°, 90°, 120°, 180°, 240°, 270°, 288°, 300°
+  - Query from 0° at harmonics n=3, 4, 5, 6 with threshold 0.95
+
+Expected:
+  - n=3 finds ONLY 0°, 120°, 240° — NOT 90°, 270°, 60°, 300°
+  - n=4 finds ONLY 0°, 90°, 180°, 270° — NOT 120°, 240°, 60°, 300°
+  - n=5 finds ONLY 0°, 72°, 288° — NOT entities from other harmonics
+  - n=6 finds 0°, 60°, 120°, 180°, 240°, 300° (subsumes n=2 and n=3 by divisibility)
+
+Pass condition: Zero cross-talk. Each harmonic finds only its own family.
+```
+
+### Test 15: Phase Wraparound at 0°/360° Boundary
+
+```
+Setup:
+  - Test the branch cut where angles wrap from 359° back to 0°
+  - Measure: distance, coherence, fuzzy score, directed distance
+  - Field query: entities at 357°-3° and 180°, find all within 5° of 0°
+
+Expected:
+  - 1° and 359° are 2° apart (not 358°)
+  - Fuzzy scores for 1° and 359° from target 0° are IDENTICAL (symmetry)
+  - Directed: 1°→359° = 358°, 359°→1° = 2°
+  - Field query catches 357°, 358°, 359°, 0°, 1°, 2°, 3° but NOT 180°
+
+Pass condition: Zero asymmetry at boundary. All distance functions handle wraparound.
+```
+
+### Test 16: Scale Resolution — 360 Distinct Values
+
+```
+Setup:
+  - 360 values (one per degree) on a 360-bucket circle
+  - For each value, query exact match
+  - Then test harmonic queries (n=3, n=4)
+  - Threshold derived from bucket size: (1.0 + cos(1°)) / 2
+
+Expected (exact match):
+  - 360 queries, 360 matches, 0 false positives
+  - Each query returns exactly 1 correct result
+
+Expected (harmonic queries):
+  - n=3 at threshold 0.99 catches ±2 neighbors per 120° center
+    → 5 per group × 3 groups = 15 matches (not 3)
+  - n=4 at threshold 0.99 catches ±2 neighbors per 90° center
+    → 5 per group × 4 groups = 20 matches (not 4)
+  - This demonstrates the harmonic-scaled Nyquist limit (Finding 4)
+
+Pass condition: Perfect exact-match resolution. Harmonic counts match
+predicted neighbor leakage. Correct centers always present.
+```
+
 ---
 
 ## What Success Looks Like
@@ -351,6 +461,12 @@ If ALL tests pass:
 7. **Results match traditional queries** — zero false positives or negatives (Test 8)
 8. **Harmonic queries find what JOINs miss** — unique value demonstrated (Test 9)
 9. **Type-dependent reach works** — asymmetric queries from config (Test 10)
+10. **Collision resolution is deterministic** — harmonic fingerprinting with closed-form formula (Test 11)
+11. **Reference amplification is exact** — mutual/one-way scoring ratios validated (Test 12)
+12. **Cycle relationships are exhaustive** — every pair has exactly one type (Test 13)
+13. **Harmonics are independent** — zero cross-talk between frequencies (Test 14)
+14. **Boundary wraparound is correct** — zero asymmetry at 0°/360° (Test 15)
+15. **Scale resolution is perfect** — 360 values, zero false positives, harmonic Nyquist validated (Test 16)
 
 If any test FAILS, we know EXACTLY which part of the math breaks and can either fix it or acknowledge the limitation before writing a single line of database code.
 

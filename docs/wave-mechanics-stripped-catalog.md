@@ -351,6 +351,8 @@ Every operation the engine needs, with its computational signature:
 
 **Operation 15 note:** When a single-harmonic scan returns multiple candidates with identical coherence (bucket collision), higher harmonics disambiguate them. Each value has a unique *harmonic fingerprint* — the vector of coherence scores across harmonics 1, 2, ..., n. By the Fourier uniqueness theorem, no two distinct values produce the same fingerprint across all harmonics. Collision resolution scales by analysis depth (more harmonics), not storage (more buckets). The required harmonic is deterministic: `n_diverge = ⌈arccos(threshold) / Δθ⌉`, validated empirically with exact prediction-to-measurement agreement at angular differences of 2°, 1°, and 0.1°.
 
+**Threshold scaling note:** For operations 5–6, the minimum coherence threshold for single-value precision depends on both bucket count B and harmonic number n. At harmonic n, the effective angular spacing is n × (2π/B), so the threshold floor is `cos(n × 2π / B)`. Higher harmonics amplify bucket spacing, requiring either tighter thresholds or more buckets for the same selectivity. The required bucket count for single-value precision at harmonic n with threshold t is: `B > n × 2π / arccos(t)`.
+
 ---
 
 ## Summary

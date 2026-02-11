@@ -9,7 +9,7 @@ A validated mathematical framework that uses phase encoding on the unit circle a
 The framework includes:
 
 - **A geometric relationship catalog** — every structural relationship pattern discoverable on a phase circle, stripped of all domain-specific interpretation, expressed as pure mathematics
-- **A validation paper** — 13 tests, 3 corrective findings, all passing, with reproducible Rust code
+- **A validation paper** — 16 tests, 4 corrective findings, all passing, with reproducible Rust code
 - **An architecture proposal** — applying wave mechanics as a substrate for LLM attention and knowledge representation
 
 ## Origin
@@ -45,10 +45,10 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 |------|-------------|
 | `docs/geometric-relationship-catalog.md` | Complete catalog of geometric relationship patterns across all source traditions (5 traditions, 26 division systems, 35+ relationship types) |
 | `docs/wave-mechanics-stripped-catalog.md` | Pure mathematical specification — all domain-specific interpretation removed, only structural geometry remains |
-| `docs/wave-test-program.md` | Test program specification — 13 tests validating the core math |
+| `docs/wave-test-program.md` | Test program specification — 16 tests validating the core math |
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
-| `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, three corrective findings from running the code |
-| `src/` | Rust source code for the validation test suite (~800 lines, zero dependencies) |
+| `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, four corrective findings from running the code |
+| `src/` | Rust source code for the validation test suite (~1030 lines, zero dependencies) |
 
 ## Reproduce the Validation
 
@@ -76,8 +76,11 @@ Test 10: PASS  (Broad: 3 targets, Narrow: 1 target, same position)
 Test 11: PASS  (Harmonic fingerprinting: predicted n matches actual at 2°, 1°, 0.1°)
 Test 12: PASS  (Mutual amplification: ordering and ratios exact)
 Test 13: PASS  (5-node cycle: 20/20 pairs, 4 types × 5, zero conflicts)
+Test 14: PASS  (Harmonic orthogonality: zero cross-talk between n=3, 4, 5, 6)
+Test 15: PASS  (Wraparound: symmetric scores at 0°/360° boundary)
+Test 16: PASS  (Scale: 360 values, 0 false positives, harmonic-scaled Nyquist validated)
 
-=== RESULTS: 13 passed, 0 failed out of 13 ===
+=== RESULTS: 16 passed, 0 failed out of 16 ===
 ALL TESTS PASSED
 ```
 
@@ -89,11 +92,16 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 
 **Test 11 validates harmonic fingerprinting.** Bucket collisions are resolvable by probing higher harmonics. The required harmonic has a closed-form formula: `n = ⌈arccos(t) / Δθ⌉`. Predicted matched actual exactly at 2° (n=13), 1° (n=26), and 0.1° (n=259). Collision resolution scales by analysis depth, not storage.
 
-**Three corrective findings tighten the design:**
+**Test 14 confirms harmonic orthogonality.** Different harmonic frequencies operate as completely independent selectors with zero cross-talk. n=3 finds only 120° family members, completely excluding 90° and 60° entities (which belong to n=4 and n=6 respectively). This validates that `cos(n × Δθ)` with different n values can serve as independent query channels on the same dataset.
+
+**Test 16 validates scale and reveals a new design rule.** 360 distinct values encoded on a 360-bucket circle are resolved with zero false positives. However, harmonic queries at this scale revealed that the Nyquist-like threshold floor (Finding 1) scales with harmonic number — see Finding 4 below.
+
+**Four corrective findings tighten the design:**
 
 1. **Bucket resolution imposes a threshold floor.** Exact match threshold must exceed `cos(2π / bucket_count)` to avoid neighbor leakage. Analogous to the Nyquist limit in signal processing.
 2. **Cosine orb falloff is nonlinear.** At 62.5% of tolerance radius, score is 0.556 (not ~0.7). The curve is concave — generous near center, steep near edge.
 3. **Asymmetric operations require directed distance.** Shortest-path distance (0-180°) destroys directionality. Typed reach needs directed distance (0-360°).
+4. **The Nyquist-like threshold floor scales with harmonic number.** At harmonic n with B buckets, the threshold floor is `cos(n × 2π / B)`, not `cos(2π / B)`. Higher harmonics amplify bucket spacing, widening neighbor leakage. For single-value precision at n=3 with 360 buckets, threshold must exceed cos(3°) = 0.9986, not cos(1°) = 0.9998.
 
 ## Potential Applications
 
