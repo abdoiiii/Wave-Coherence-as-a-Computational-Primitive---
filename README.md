@@ -9,7 +9,7 @@ A validated mathematical framework that uses phase encoding on the unit circle a
 The framework includes:
 
 - **A geometric relationship catalog** — every structural relationship pattern discoverable on a phase circle, stripped of all domain-specific interpretation, expressed as pure mathematics
-- **A validation paper** — 16 tests, 4 corrective findings, all passing, with reproducible Rust code
+- **A validation paper** — 17 tests, 4 corrective findings, all passing, with reproducible Rust code
 - **An architecture proposal** — applying wave mechanics as a substrate for LLM attention and knowledge representation
 
 ## Origin
@@ -45,10 +45,10 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 |------|-------------|
 | `docs/geometric-relationship-catalog.md` | Complete catalog of geometric relationship patterns across all source traditions (5 traditions, 26 division systems, 35+ relationship types) |
 | `docs/wave-mechanics-stripped-catalog.md` | Pure mathematical specification — all domain-specific interpretation removed, only structural geometry remains |
-| `docs/wave-test-program.md` | Test program specification — 16 tests validating the core math |
+| `docs/wave-test-program.md` | Test program specification — 17 tests validating the core math |
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
 | `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, four corrective findings from running the code |
-| `src/` | Rust source code for the validation test suite (~1030 lines, zero dependencies) |
+| `src/` | Rust source code for the validation test suite (~1450 lines, zero dependencies) |
 
 ## Reproduce the Validation
 
@@ -79,8 +79,9 @@ Test 13: PASS  (5-node cycle: 20/20 pairs, 4 types × 5, zero conflicts)
 Test 14: PASS  (Harmonic orthogonality: zero cross-talk between n=3, 4, 5, 6)
 Test 15: PASS  (Wraparound: symmetric scores at 0°/360° boundary)
 Test 16: PASS  (Scale: 360 values, 0 false positives, harmonic-scaled Nyquist validated)
+Test 17: PASS  (Density scaling: sparse clean, degradation at density, harmonic scales with separation)
 
-=== RESULTS: 16 passed, 0 failed out of 16 ===
+=== RESULTS: 17 passed, 0 failed out of 17 ===
 ALL TESTS PASSED
 ```
 
@@ -95,6 +96,8 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 **Test 14 confirms harmonic orthogonality.** Different harmonic frequencies operate as completely independent selectors with zero cross-talk. n=3 finds only 120° family members, completely excluding 90° and 60° entities (which belong to n=4 and n=6 respectively). This validates that `cos(n × Δθ)` with different n values can serve as independent query channels on the same dataset.
 
 **Test 16 validates scale and reveals a new design rule.** 360 distinct values encoded on a 360-bucket circle are resolved with zero false positives. However, harmonic queries at this scale revealed that the Nyquist-like threshold floor (Finding 1) scales with harmonic number — see Finding 4 below.
+
+**Test 17 characterizes density scaling limits.** Eight configurations from 7-in-12 to 360-in-360, placed at golden angle intervals, reveal that exact match fails only at 100% bucket saturation, while triadic (n=3) detection becomes noisy at lower densities due to harmonic amplification of angular proximity. The resolution harmonic needed to distinguish the closest pair scales inversely with minimum separation, following the formula from Test 11.
 
 **Four corrective findings tighten the design:**
 

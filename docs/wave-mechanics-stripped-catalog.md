@@ -353,6 +353,8 @@ Every operation the engine needs, with its computational signature:
 
 **Threshold scaling note:** For operations 5–6, the minimum coherence threshold for single-value precision depends on both bucket count B and harmonic number n. At harmonic n, the effective angular spacing is n × (2π/B), so the threshold floor is `cos(n × 2π / B)`. Higher harmonics amplify bucket spacing, requiring either tighter thresholds or more buckets for the same selectivity. The required bucket count for single-value precision at harmonic n with threshold t is: `B > n × 2π / arccos(t)`.
 
+**Density scaling note:** For N objects on a B-bucket circle, exact match requires density < 100% (no two objects in the same bucket). Harmonic queries degrade earlier: triadic (n=3) detection at threshold 0.85 becomes noisy when minimum pairwise separation falls below ~10°. The resolution harmonic needed for the closest pair follows `max_n = ⌈arccos(t) / min_sep⌉`. Bucket collision probability follows the birthday problem: `P(collision) ≈ 1 - e^(-N²/2B)`.
+
 ---
 
 ## Summary

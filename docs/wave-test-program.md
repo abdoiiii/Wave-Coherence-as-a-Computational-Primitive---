@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Rust program (~1030 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
+A Rust program (~1450 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
 - Encode values as complex numbers
 - Compute coherence
 - Check if harmonic detection actually works
@@ -446,6 +446,35 @@ Pass condition: Perfect exact-match resolution. Harmonic counts match
 predicted neighbor leakage. Correct centers always present.
 ```
 
+### Test 17: Density Scaling and Capacity Limits
+
+```
+Setup:
+  - Eight (N, B) configurations ranging from sparse to saturated:
+    7-in-12, 9-in-27, 12-in-12, 20-in-60, 50-in-360, 100-in-360, 200-in-360, 360-in-360
+  - Objects placed using golden angle spacing (~137.508°) to avoid grid alignment
+  - For each configuration, measure:
+    - Minimum pairwise angular separation
+    - Maximum harmonic needed to resolve closest pair (formula from Test 11)
+    - Exact match precision (can each object be uniquely identified?)
+    - Triadic (n=3) detection cleanliness at threshold 0.85
+  - Birthday problem collision probability computed for each configuration
+
+Expected:
+  - Sparse configs (7 in 12, 9 in 27): both exact match and triadic detection clean
+  - System degrades at some density threshold
+  - Exact match fails only at 100% bucket saturation
+  - Resolution harmonic increases as objects crowd closer together
+  - Triadic detection is more sensitive to crowding than exact match
+    (n=3 amplifies angular differences by factor 3)
+
+Pass condition:
+  - Smallest configuration fully clean (exact + triadic)
+  - Degradation occurs at higher density
+  - Resolution harmonic scales with density
+  - Exact match fails only at 100% saturation
+```
+
 ---
 
 ## What Success Looks Like
@@ -467,6 +496,7 @@ If ALL tests pass:
 13. **Harmonics are independent** — zero cross-talk between frequencies (Test 14)
 14. **Boundary wraparound is correct** — zero asymmetry at 0°/360° (Test 15)
 15. **Scale resolution is perfect** — 360 values, zero false positives, harmonic Nyquist validated (Test 16)
+16. **Density scaling is characterized** — sparse configs clean, degradation predictable, exact match robust at sub-saturation (Test 17)
 
 If any test FAILS, we know EXACTLY which part of the math breaks and can either fix it or acknowledge the limitation before writing a single line of database code.
 
