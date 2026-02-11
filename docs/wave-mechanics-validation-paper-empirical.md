@@ -116,14 +116,20 @@ This returns values in [0, 360), preserving directionality that shortest-path di
 
 ### 3.1 Implementation
 
-The test program is implemented in Rust (edition 2024) with zero external dependencies. Complex64 arithmetic is reduced to f64 angle storage with cos/sin operations. The program consists of four modules:
+The test program is implemented in Rust (edition 2024) with zero external dependencies. Complex64 arithmetic is reduced to f64 angle storage with cos/sin operations. The program is organized into core library modules and categorized test modules:
 
 | Module | Purpose | Lines |
 |--------|---------|-------|
-| `wave.rs` | Phase encoding, coherence, fuzzy matching | ~55 |
-| `field.rs` | ResonanceField collection, scan operations | ~80 |
-| `relationships.rs` | Directed cycles, structural pair tables | ~45 |
-| `main.rs` | 17 test functions with pass/fail evaluation | ~1000 |
+| `wave.rs` | Phase encoding, coherence, fuzzy matching | ~85 |
+| `field.rs` | ResonanceField collection, scan operations | ~110 |
+| `relationships.rs` | Directed cycles, structural pair tables | ~60 |
+| `main.rs` | Test runner | ~40 |
+| `tests/core_tests.rs` | Tests 1–5: encoding, harmonics, fuzzy, multi-attribute | ~230 |
+| `tests/structural.rs` | Tests 6–7: directed cycles, structural pairs | ~90 |
+| `tests/comparison.rs` | Tests 8–9: wave vs linear, harmonic vs JOIN | ~120 |
+| `tests/advanced.rs` | Tests 10–13: typed reach, fingerprinting, amplification, uniqueness | ~250 |
+| `tests/boundary.rs` | Tests 14–16: orthogonality, wraparound, scale | ~180 |
+| `tests/scaling.rs` | Test 17: density scaling and capacity limits | ~200 |
 
 ### 3.2 Test Matrix
 
@@ -743,10 +749,18 @@ All test parameters are deterministic. Results are reproducible across platforms
 wave-test/
 ├── Cargo.toml
 ├── src/
-│   ├── main.rs          # Test runner (17 tests, ~1200 lines)
-│   ├── wave.rs          # Phase, WavePacket, coherence (~60 lines)
-│   ├── field.rs         # ResonanceField, scan operations (~110 lines)
-│   └── relationships.rs # DirectedCycle, PairTable (~60 lines)
+│   ├── main.rs              # Test runner (~40 lines)
+│   ├── wave.rs              # Phase, WavePacket, coherence (~85 lines)
+│   ├── field.rs             # ResonanceField, scan operations (~110 lines)
+│   ├── relationships.rs     # DirectedCycle, PairTable (~60 lines)
+│   └── tests/
+│       ├── mod.rs           # Module re-exports
+│       ├── core_tests.rs    # Tests 1-5 (~230 lines)
+│       ├── structural.rs    # Tests 6-7 (~90 lines)
+│       ├── comparison.rs    # Tests 8-9 (~120 lines)
+│       ├── advanced.rs      # Tests 10-13 (~250 lines)
+│       ├── boundary.rs      # Tests 14-16 (~180 lines)
+│       └── scaling.rs       # Test 17 (~200 lines)
 ```
 
 Total: ~1450 lines of Rust, zero dependencies.

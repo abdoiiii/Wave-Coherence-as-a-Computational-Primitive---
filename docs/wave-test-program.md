@@ -18,10 +18,18 @@ If this fails, there's no point building the database layer.
 wave-test/
 ├── Cargo.toml
 ├── src/
-│   ├── main.rs          # Test runner
-│   ├── wave.rs          # WavePacket, encode, coherence
-│   ├── field.rs         # ResonanceField, scan operations
-│   └── relationships.rs # Harmonic detection, pair tables, directed cycles
+│   ├── main.rs              # Test runner (~40 lines)
+│   ├── wave.rs              # Phase, WavePacket, coherence
+│   ├── field.rs             # ResonanceField, scan operations
+│   ├── relationships.rs     # DirectedCycle, PairTable
+│   └── tests/
+│       ├── mod.rs           # Module re-exports
+│       ├── core_tests.rs    # Tests 1-5: encoding, harmonics, fuzzy, multi-attribute
+│       ├── structural.rs    # Tests 6-7: directed cycles, structural pairs
+│       ├── comparison.rs    # Tests 8-9: wave vs linear, harmonic vs JOIN
+│       ├── advanced.rs      # Tests 10-13: typed reach, fingerprinting, amplification, cycle uniqueness
+│       ├── boundary.rs      # Tests 14-16: orthogonality, wraparound, scale resolution
+│       └── scaling.rs       # Test 17: density scaling and capacity limits
 ```
 
 ### Dependencies
