@@ -9,7 +9,7 @@ A validated mathematical framework that uses phase encoding on the unit circle a
 The framework includes:
 
 - **A geometric relationship catalog** — every structural relationship pattern discoverable on a phase circle, stripped of all domain-specific interpretation, expressed as pure mathematics
-- **A validation paper** — 17 tests, 4 corrective findings, all passing, with reproducible Rust code
+- **A validation paper** — 18 tests, 4 corrective findings, all passing, with reproducible Rust code
 - **An architecture proposal** — applying wave mechanics as a substrate for LLM attention and knowledge representation
 
 ## Origin
@@ -45,10 +45,10 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 |------|-------------|
 | `docs/geometric-relationship-catalog.md` | Complete catalog of geometric relationship patterns across all source traditions (5 traditions, 26 division systems, 35+ relationship types) |
 | `docs/wave-mechanics-stripped-catalog.md` | Pure mathematical specification — all domain-specific interpretation removed, only structural geometry remains |
-| `docs/wave-test-program.md` | Test program specification — 17 tests validating the core math |
+| `docs/wave-test-program.md` | Test program specification — 18 tests validating the core math |
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
 | `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, four corrective findings from running the code |
-| `src/` | Rust source code for the validation test suite (~1450 lines, zero dependencies) |
+| `src/` | Rust source code for the validation test suite (~1700 lines, zero dependencies) |
 
 ## Reproduce the Validation
 
@@ -80,8 +80,9 @@ Test 14: PASS  (Harmonic orthogonality: zero cross-talk between n=3, 4, 5, 6)
 Test 15: PASS  (Wraparound: symmetric scores at 0°/360° boundary)
 Test 16: PASS  (Scale: 360 values, 0 false positives, harmonic-scaled Nyquist validated)
 Test 17: PASS  (Density scaling: sparse clean, degradation at density, harmonic scales with separation)
+Test 18: PASS  (Bucket index: all queries match full scan, ~13% selectivity at 1000 entities)
 
-=== RESULTS: 17 passed, 0 failed out of 17 ===
+=== RESULTS: 18 passed, 0 failed out of 18 ===
 ALL TESTS PASSED
 ```
 
@@ -99,6 +100,8 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 
 **Test 17 characterizes density scaling limits.** Eight configurations from 7-in-12 to 360-in-360, placed at golden angle intervals, reveal that exact match fails only at 100% bucket saturation, while triadic (n=3) detection becomes noisy at lower densities due to harmonic amplification of angular proximity. The resolution harmonic needed to distinguish the closest pair scales inversely with minimum separation, following the formula from Test 11.
 
+**Test 18 proves the self-indexing property.** A BucketIndex that uses the encoded phase position as the bucket address — no separate index structure — produces results identical to a full scan while examining only a fraction of entities. At 1000 entities on 360 buckets: exact match at threshold 0.999 examines 2.0% of entities, exact match at 0.95 examines 10.7%, and harmonic queries examine 15-23%. The circle IS the index: insertion is O(1), and queries are sub-linear with zero maintenance overhead.
+
 **Four corrective findings tighten the design:**
 
 1. **Bucket resolution imposes a threshold floor.** Exact match threshold must exceed `cos(2π / bucket_count)` to avoid neighbor leakage. Analogous to the Nyquist limit in signal processing.
@@ -109,7 +112,7 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 ## Potential Applications
 
 ### Database Query Engine
-Phase-encoded entities with coherence-based scanning for relationship-dense data. Compound relational queries (harmonic family + structural pair + directed dependency + domain relevance) computed as interference patterns rather than multiple JOINs.
+Phase-encoded entities with coherence-based scanning for relationship-dense data. Compound relational queries (harmonic family + structural pair + directed dependency + domain relevance) computed as interference patterns rather than multiple JOINs. The self-indexing property (Test 18) means insertion automatically indexes entities by their encoded position, with sub-linear query performance and zero index maintenance.
 
 ### LLM Architecture
 - Attention heads parameterized by harmonic frequency instead of learned weights

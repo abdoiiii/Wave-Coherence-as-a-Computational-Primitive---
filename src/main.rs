@@ -30,6 +30,7 @@ fn main() {
     if test_15_wraparound() { passed += 1; } else { failed += 1; }
     if test_16_scale_resolution() { passed += 1; } else { failed += 1; }
     if test_17_scaling_limits() { passed += 1; } else { failed += 1; }
+    if test_18_bucket_index() { passed += 1; } else { failed += 1; }
 
     let total = passed + failed;
     println!("\n=== RESULTS: {passed} passed, {failed} failed out of {total} ===");

@@ -355,6 +355,8 @@ Every operation the engine needs, with its computational signature:
 
 **Density scaling note:** For N objects on a B-bucket circle, exact match requires density < 100% (no two objects in the same bucket). Harmonic queries degrade earlier: triadic (n=3) detection at threshold 0.85 becomes noisy when minimum pairwise separation falls below ~10°. The resolution harmonic needed for the closest pair follows `max_n = ⌈arccos(t) / min_sep⌉`. Bucket collision probability follows the birthday problem: `P(collision) ≈ 1 - e^(-N²/2B)`.
 
+**Self-indexing note:** Circular phase encoding is inherently self-indexing. Because the encoded value determines the angular position and the position determines the storage bucket, insertion simultaneously stores and indexes the entity. No separate index structure (B-tree, hash map) is required. Queries compute target bucket(s) and check only the relevant neighborhood. Exact query examines `⌈arccos(threshold) / (2π/B)⌉` buckets per side; harmonic query examines n regions each with `⌈arccos(threshold) / (n × 2π/B)⌉` buckets. Insert is O(1), queries are sub-linear.
+
 ---
 
 ## Summary

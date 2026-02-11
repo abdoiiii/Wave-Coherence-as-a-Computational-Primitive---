@@ -4,7 +4,7 @@
 
 ## Abstract
 
-We present empirical validation of a phase-encoding scheme that maps discrete attribute values onto the unit circle and uses coherence — the cosine of angular difference — as a universal relationship detection operator. Across 17 structured tests, we demonstrate that a single mathematical function, `cos(n * (θ_a - θ_b))`, correctly identifies exact matches, harmonic families, opposition relationships, and fuzzy proximity, matching or exceeding the expressiveness of traditional WHERE and JOIN operations for relationship-heavy queries. We further validate that this geometric core composes cleanly with structural pair tables, directed cycle traversal, asymmetric typed reach, multi-attribute conjunction, harmonic fingerprinting for collision resolution, mutual reference amplification, exhaustive cycle relationship uniqueness, harmonic orthogonality across frequencies, phase wraparound at the 0°/360° boundary, scale resolution across 360 distinct values, and density scaling limits across configurations from sparse to saturated. Four corrective findings emerged during testing: bucket resolution imposes a minimum coherence threshold for exact matching, cosine-based orb falloff is steeper than linear approximation suggests, asymmetric entity reach requires directed (0-360) rather than shortest-path (0-180) angular distance, and the Nyquist-like threshold floor scales with harmonic number. All 17 tests pass, confirming the mathematical soundness of the approach as a foundation for a wave-mechanics query engine.
+We present empirical validation of a phase-encoding scheme that maps discrete attribute values onto the unit circle and uses coherence — the cosine of angular difference — as a universal relationship detection operator. Across 18 structured tests, we demonstrate that a single mathematical function, `cos(n * (θ_a - θ_b))`, correctly identifies exact matches, harmonic families, opposition relationships, and fuzzy proximity, matching or exceeding the expressiveness of traditional WHERE and JOIN operations for relationship-heavy queries. We further validate that this geometric core composes cleanly with structural pair tables, directed cycle traversal, asymmetric typed reach, multi-attribute conjunction, harmonic fingerprinting for collision resolution, mutual reference amplification, exhaustive cycle relationship uniqueness, harmonic orthogonality across frequencies, phase wraparound at the 0°/360° boundary, scale resolution across 360 distinct values, density scaling limits across configurations from sparse to saturated, and a self-indexing property where the encoded phase position serves as the index address, achieving sub-linear query performance with no separate index structure. Four corrective findings emerged during testing: bucket resolution imposes a minimum coherence threshold for exact matching, cosine-based orb falloff is steeper than linear approximation suggests, asymmetric entity reach requires directed (0-360) rather than shortest-path (0-180) angular distance, and the Nyquist-like threshold floor scales with harmonic number. All 18 tests pass, confirming the mathematical soundness of the approach as a foundation for a wave-mechanics query engine.
 
 ---
 
@@ -46,7 +46,7 @@ The contribution, if any, is in the combination: established mathematical tools 
 
 ### 1.3 Scope
 
-This paper validates the mathematical foundation only. We do not address indexing strategies, storage formats, query planning, or performance at scale. Those are engineering concerns contingent on the math being sound. If the math fails, no engineering can save it.
+This paper validates the mathematical foundation and one structural consequence: the self-indexing property of circular phase encoding. We do not address storage formats, query planning, or full-scale performance benchmarking. Those are engineering concerns contingent on the math being sound. If the math fails, no engineering can save it.
 
 ---
 
@@ -121,15 +121,16 @@ The test program is implemented in Rust (edition 2024) with zero external depend
 | Module | Purpose | Lines |
 |--------|---------|-------|
 | `wave.rs` | Phase encoding, coherence, fuzzy matching | ~85 |
-| `field.rs` | ResonanceField collection, scan operations | ~110 |
+| `field.rs` | ResonanceField, BucketIndex, scan operations | ~220 |
 | `relationships.rs` | Directed cycles, structural pair tables | ~60 |
-| `main.rs` | Test runner | ~40 |
+| `main.rs` | Test runner | ~42 |
 | `tests/core_tests.rs` | Tests 1–5: encoding, harmonics, fuzzy, multi-attribute | ~230 |
 | `tests/structural.rs` | Tests 6–7: directed cycles, structural pairs | ~90 |
 | `tests/comparison.rs` | Tests 8–9: wave vs linear, harmonic vs JOIN | ~120 |
 | `tests/advanced.rs` | Tests 10–13: typed reach, fingerprinting, amplification, uniqueness | ~250 |
 | `tests/boundary.rs` | Tests 14–16: orthogonality, wraparound, scale | ~180 |
 | `tests/scaling.rs` | Test 17: density scaling and capacity limits | ~200 |
+| `tests/indexing.rs` | Test 18: self-indexing property, bucket index | ~150 |
 
 ### 3.2 Test Matrix
 
@@ -154,6 +155,7 @@ Each test targets a specific claim or operation:
 | 15 | Phase wraparound | Correctness at the 0°/360° boundary |
 | 16 | Scale resolution | 360 distinct values, zero false positives, harmonic-scaled Nyquist |
 | 17 | Density scaling | Capacity limits across sparse-to-saturated configurations |
+| 18 | Self-indexing | Bucket index matches full scan with sub-linear entity examination |
 
 ---
 
@@ -589,13 +591,56 @@ At 360 buckets:
 
 **Verdict:** PASS. The scaling behavior is characterized: exact match is robust across all sub-saturated densities, harmonic queries degrade predictably as angular separation decreases, and the required resolution harmonic follows the closed-form formula from Test 11.
 
+### 4.18 Test 18: Self-Indexing Property — Placement as Indexing
+
+**Setup:** 1000 entities placed on a 360-bucket circle using golden angle spacing (~137.508°). Each entity is inserted into both a ResonanceField (full scan baseline) and a BucketIndex — a structure where the encoded phase position directly determines the storage bucket. The BucketIndex computes which buckets to check based on the query parameters: for exact queries, the angular window where `cos(δ) >= threshold` determines the spread; for harmonic queries, n regions at 360°/n intervals are checked, each with spread `arccos(threshold) / n`. Three test suites: exact match at varying thresholds, harmonic queries at n=2 through n=12, and multi-target verification across 6 positions around the circle.
+
+**Result — exact match queries:**
+
+| Threshold | Found | Examined | Selectivity | Correct |
+|---|---|---|---|---|
+| 0.950 | 101 | 107/1000 | 10.7% | YES |
+| 0.990 | 46 | 53/1000 | 5.3% | YES |
+| 0.999 | 14 | 20/1000 | 2.0% | YES |
+
+**Result — harmonic queries (threshold 0.90):**
+
+| Harmonic | Found | Examined | Selectivity | Correct |
+|---|---|---|---|---|
+| n=2 | 144 | 150/1000 | 15.0% | YES |
+| n=3 | 143 | 158/1000 | 15.8% | YES |
+| n=4 | 144 | 167/1000 | 16.7% | YES |
+| n=6 | 143 | 185/1000 | 18.5% | YES |
+| n=12 | 142 | 234/1000 | 23.4% | YES |
+
+**Result — multi-target verification:** 12 of 12 queries (6 exact + 6 harmonic) returned results identical to full scan. Average selectivity across all queries: 13.3%.
+
+**Analysis:**
+
+1. **Correctness is perfect.** Every indexed query returns exactly the same result set as the full scan baseline. Zero false positives, zero false negatives, across all thresholds, all harmonics, and all target positions.
+
+2. **Selectivity scales with threshold tightness.** At threshold 0.999 (tight), only 2.0% of entities are examined. At 0.95 (loose), 10.7%. The spread formula `⌈arccos(threshold) / bucket_angle⌉` determines exactly how many neighbor buckets to check.
+
+3. **Harmonic queries check more buckets but remain sub-linear.** At n=12, twelve regions are checked around the circle, but each region's window is narrowed by factor 12. Total examination reaches 23.4% — still less than a quarter of all entities. The tradeoff: higher harmonics fan out to more regions but with tighter windows per region.
+
+4. **No separate index structure exists.** The BucketIndex stores entities in a `Vec<Vec<usize>>` where the array index IS the bucket number, computed directly from the encoded phase. Insert computes the bucket from the phase angle and appends — O(1). There is no B-tree, no hash map, no rebalancing. The circle is the index.
+
+**Corollary derived from the data:** Circular phase encoding is self-indexing. Because the encoded value determines the position, and the position determines the bucket, insertion simultaneously stores and indexes the entity. Queries compute the target bucket(s) from the query parameters and check only the relevant neighborhood. This is a structural consequence of the encoding, not an optimization added on top.
+
+**Complexity:**
+- Insert: O(1)
+- Exact query: O(spread × density), where spread = `⌈arccos(threshold) / (2π/B)⌉` and density = N/B
+- Harmonic query: O(n × spread × density), where spread = `⌈arccos(threshold) / (n × 2π/B)⌉`
+
+**Verdict:** PASS. All indexed queries match full scan. Sub-linear examination confirmed across all query types. The self-indexing property is a direct consequence of circular phase encoding.
+
 ---
 
 ## 5. Discussion
 
 ### 5.1 What the Tests Prove
 
-The seventeen tests collectively validate six properties:
+The eighteen tests collectively validate seven properties:
 
 **Correctness (Tests 1, 8, 15, 16):** Phase-encoded coherence scanning produces result sets identical to linear value comparison. The encoding is lossless within bucket resolution, the coherence function is a faithful equality operator at sufficient threshold, the 0°/360° boundary introduces zero asymmetry (Test 15), and the system resolves 360 distinct values with zero false positives (Test 16).
 
@@ -616,6 +661,8 @@ No operation interferes with another. The geometric and structural query paths a
 **Scale Behavior (Test 16):** The framework operates correctly at 360-value scale with zero false positives for exact matching. Harmonic queries at scale reveal the harmonic-scaled Nyquist limit (Finding 4): the threshold floor increases linearly with harmonic number.
 
 **Density Scaling (Test 17):** Across eight configurations from 7-in-12 to 360-in-360, exact match proves robust at all sub-saturated densities, while harmonic queries (n=3) degrade predictably as minimum angular separation decreases. The resolution harmonic needed to distinguish the closest pair follows the closed-form formula from Test 11, and collision probability follows the birthday problem.
+
+**Self-Indexing (Test 18):** Circular phase encoding is inherently self-indexing. Because the encoded value determines the angular position and the position determines the storage bucket, insertion simultaneously stores and indexes the entity. A BucketIndex using this property produces results identical to full scan while examining 2-23% of entities depending on query tightness. No separate index structure (B-tree, hash map) is required. This is a structural consequence of the encoding, not an optimization.
 
 ### 5.2 Four Corrective Findings
 
@@ -704,7 +751,7 @@ This was verified at three scales with exact agreement between prediction and me
 
 Collision resolution is therefore achieved by probing additional harmonics rather than increasing bucket count — scaling analysis depth rather than storage. The required harmonic is deterministic, not a search. Bucket count should still be chosen to provide sufficient separation for the expected value space as a practical measure to keep resolution harmonics low.
 
-**O(n) scan.** The current implementation scans all entities in the field for every query. At scale, this requires indexing — likely a spatial index on the encoded angles (e.g., angular buckets or a phase-aware tree structure). The math is sound, but the naieve implementation does not outperform a linear scan because it IS a linear scan with a different comparison operator.
+**O(n) scan partially addressed.** The ResonanceField implementation scans all entities for every query. Test 18 demonstrates that a BucketIndex — using the encoded phase position as the bucket address — achieves sub-linear query performance (2-23% of entities examined) with results identical to full scan. This addresses the indexing question for single-attribute queries. Multi-attribute indexing (where entities have phases on multiple attributes) remains an open engineering problem.
 
 **No string semantics.** Phase encoding discards the original value. The engine can determine that two values are "the same" or "120 apart" but cannot retrieve the original value from the phase alone. A reverse mapping must be maintained separately.
 
@@ -714,11 +761,11 @@ Collision resolution is therefore achieved by probing additional harmonics rathe
 
 ## 6. Conclusion
 
-The seventeen tests validate that phase-encoded coherence is a mathematically sound foundation for relationship detection. The core operation — `cos(n * (θ_a - θ_b))` — is correct, expressive, and composable. It handles exact matching, harmonic family detection, opposition, fuzzy proximity, multi-attribute conjunction, harmonic fingerprinting, mutual amplification, exhaustive cycle partitioning, cross-harmonic independence, boundary wraparound, 360-value scale resolution, and density scaling characterization with a single function parameterized by harmonic number and tolerance.
+The eighteen tests validate that phase-encoded coherence is a mathematically sound foundation for relationship detection. The core operation — `cos(n * (θ_a - θ_b))` — is correct, expressive, and composable. It handles exact matching, harmonic family detection, opposition, fuzzy proximity, multi-attribute conjunction, harmonic fingerprinting, mutual amplification, exhaustive cycle partitioning, cross-harmonic independence, boundary wraparound, 360-value scale resolution, density scaling characterization, and self-indexed sub-linear querying with a single function parameterized by harmonic number and tolerance.
 
 Four corrective findings tighten the design constraints: thresholds must account for bucket resolution, orb falloff follows cosine (not linear) curves, asymmetric operations require directed angular distance, and the Nyquist-like threshold floor scales linearly with harmonic number. None of these invalidate the approach; they are configuration requirements that the engine must enforce.
 
-The strongest results are Test 9 (a single harmonic scan discovers relationship groups that require multiple explicit JOINs), Test 11 (harmonic fingerprinting resolves collisions with a deterministic closed-form formula), Test 14 (harmonics operate as completely independent selectors with zero cross-talk), Test 16 (360 distinct values resolved with zero false positives, revealing the harmonic-scaled Nyquist limit), and Test 17 (density scaling behavior characterized across eight configurations, confirming exact match robustness at sub-saturated densities and predictable harmonic degradation).
+The strongest results are Test 9 (a single harmonic scan discovers relationship groups that require multiple explicit JOINs), Test 11 (harmonic fingerprinting resolves collisions with a deterministic closed-form formula), Test 14 (harmonics operate as completely independent selectors with zero cross-talk), Test 16 (360 distinct values resolved with zero false positives, revealing the harmonic-scaled Nyquist limit), Test 17 (density scaling behavior characterized across eight configurations, confirming exact match robustness at sub-saturated densities and predictable harmonic degradation), and Test 18 (the self-indexing property — circular encoding inherently provides sub-linear query performance without a separate index structure).
 
 The hypothesis holds. The next step is building the database layer.
 
@@ -749,9 +796,9 @@ All test parameters are deterministic. Results are reproducible across platforms
 wave-test/
 ├── Cargo.toml
 ├── src/
-│   ├── main.rs              # Test runner (~40 lines)
+│   ├── main.rs              # Test runner (~42 lines)
 │   ├── wave.rs              # Phase, WavePacket, coherence (~85 lines)
-│   ├── field.rs             # ResonanceField, scan operations (~110 lines)
+│   ├── field.rs             # ResonanceField, BucketIndex (~220 lines)
 │   ├── relationships.rs     # DirectedCycle, PairTable (~60 lines)
 │   └── tests/
 │       ├── mod.rs           # Module re-exports
@@ -760,10 +807,11 @@ wave-test/
 │       ├── comparison.rs    # Tests 8-9 (~120 lines)
 │       ├── advanced.rs      # Tests 10-13 (~250 lines)
 │       ├── boundary.rs      # Tests 14-16 (~180 lines)
-│       └── scaling.rs       # Test 17 (~200 lines)
+│       ├── scaling.rs       # Test 17 (~200 lines)
+│       └── indexing.rs      # Test 18 (~150 lines)
 ```
 
-Total: ~1450 lines of Rust, zero dependencies.
+Total: ~1700 lines of Rust, zero dependencies.
 
 ## Appendix C: Raw Test Output
 
@@ -787,7 +835,8 @@ Test 14: PASS  (Harmonic orthogonality: zero cross-talk between n=3, 4, 5, 6)
 Test 15: PASS  (Wraparound: symmetric scores at 0°/360° boundary)
 Test 16: PASS  (Scale: 360 values, 0 false positives, harmonic-scaled Nyquist validated)
 Test 17: PASS  (Density scaling: sparse clean, degradation at density, harmonic scales with separation)
+Test 18: PASS  (Bucket index: all queries match full scan, ~13% selectivity at 1000 entities)
 
-=== RESULTS: 17 passed, 0 failed out of 17 ===
+=== RESULTS: 18 passed, 0 failed out of 18 ===
 ALL TESTS PASSED
 ```

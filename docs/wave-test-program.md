@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Rust program (~1450 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
+A Rust program (~1700 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
 - Encode values as complex numbers
 - Compute coherence
 - Check if harmonic detection actually works
@@ -29,7 +29,8 @@ wave-test/
 │       ├── comparison.rs    # Tests 8-9: wave vs linear, harmonic vs JOIN
 │       ├── advanced.rs      # Tests 10-13: typed reach, fingerprinting, amplification, cycle uniqueness
 │       ├── boundary.rs      # Tests 14-16: orthogonality, wraparound, scale resolution
-│       └── scaling.rs       # Test 17: density scaling and capacity limits
+│       ├── scaling.rs       # Test 17: density scaling and capacity limits
+│       └── indexing.rs      # Test 18: self-indexing property, bucket index
 ```
 
 ### Dependencies
@@ -483,6 +484,29 @@ Pass condition:
   - Exact match fails only at 100% saturation
 ```
 
+### Test 18: Self-Indexing Property — Placement as Indexing
+
+```
+Setup:
+  - 1000 entities placed on a 360-bucket circle using golden angle spacing
+  - Each entity inserted into both ResonanceField (full scan) and BucketIndex
+  - BucketIndex: encoded phase position determines storage bucket directly
+  - Three test suites:
+    1. Exact match at thresholds 0.95, 0.99, 0.999
+    2. Harmonic queries at n=2, 3, 4, 6, 12 with threshold 0.90
+    3. Multi-target verification: 6 positions × (exact + harmonic n=3)
+
+Expected:
+  - Every indexed query returns identical results to full scan
+  - Selectivity is sub-linear: far fewer than 100% of entities examined
+  - Tighter thresholds examine fewer entities
+  - No separate index structure needed — the circle IS the index
+
+Pass condition:
+  - All indexed queries match full scan (zero false positives, zero false negatives)
+  - Selectivity is measurably sub-linear across all query types
+```
+
 ---
 
 ## What Success Looks Like
@@ -505,6 +529,7 @@ If ALL tests pass:
 14. **Boundary wraparound is correct** — zero asymmetry at 0°/360° (Test 15)
 15. **Scale resolution is perfect** — 360 values, zero false positives, harmonic Nyquist validated (Test 16)
 16. **Density scaling is characterized** — sparse configs clean, degradation predictable, exact match robust at sub-saturation (Test 17)
+17. **Self-indexing is proven** — placement on the circle IS the index, sub-linear queries with no separate index structure (Test 18)
 
 If any test FAILS, we know EXACTLY which part of the math breaks and can either fix it or acknowledge the limitation before writing a single line of database code.
 
