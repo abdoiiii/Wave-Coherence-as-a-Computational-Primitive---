@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/1153530777.svg)](https://doi.org/10.5281/zenodo.18607190)
+
 # Wave Coherence as a Computational Primitive
 
 ## What This Is
