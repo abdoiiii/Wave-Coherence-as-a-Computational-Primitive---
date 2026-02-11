@@ -103,6 +103,12 @@ Phase-encoded entities with coherence-based scanning for relationship-dense data
 ### Knowledge Graph / RAG
 Typed retrieval that surfaces not just "documents about X" but "documents about things that enable X" or "documents about things X conflicts with" — relationship-typed retrieval that cosine similarity alone cannot express.
 
+## Related Work
+
+Listopad (2025) independently developed ResonanceDB, a phase-aware retrieval system that scores document relevance using resonance-based coherence rather than cosine similarity over flat embeddings. Their empirical results validate that phase-encoded scoring outperforms standard vector retrieval for relationship-sensitive queries. The present work extends this direction from the retrieval layer to the encoding substrate itself — proposing harmonic coherence not as a scoring alternative bolted onto existing embeddings, but as the foundational computational primitive for encoding, querying, and discovering relationships.
+
+- Listopad, S. (2025). *Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval.* arXiv:2509.09691. https://arxiv.org/abs/2509.09691
+
 ## Attribution
 
 This work is a collaboration between Marco (conceptual framework, key theoretical insights, architectural direction) and Claude (Anthropic's AI assistant — mathematical formalization, documentation, test design, and code generation). 

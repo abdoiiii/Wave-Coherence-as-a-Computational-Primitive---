@@ -24,6 +24,8 @@ Consider a system where entities can be:
 
 In a traditional relational schema, each of these requires distinct tables, indexes, and query patterns. The combinatorial surface grows rapidly.
 
+Recent work by Listopad (2025) demonstrated that phase-aware scoring outperforms cosine similarity for relationship-sensitive retrieval in their ResonanceDB system [1]. Their approach validates the utility of resonance-based coherence as a retrieval operator. The present work asks a more fundamental question: whether phase encoding can serve as the computational substrate itself, not merely a scoring layer over existing embeddings.
+
 ### 1.2 The Hypothesis
 
 We hypothesize that encoding attribute values as angles on the unit circle and using coherence (the cosine of angular difference) as the primary comparison operator can replace traditional WHERE and JOIN for relationship detection, with three specific claims:
@@ -469,6 +471,12 @@ Three corrective findings tighten the design constraints: thresholds must accoun
 The strongest result is Test 9: a single harmonic scan discovers relationship groups that require multiple explicit JOINs in a relational model. This advantage is inherent to the mathematical structure and scales with relationship density.
 
 The hypothesis holds. The next step is building the database layer.
+
+---
+
+## References
+
+[1] Listopad, S. (2025). Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval. arXiv:2509.09691. https://arxiv.org/abs/2509.09691
 
 ---
 
