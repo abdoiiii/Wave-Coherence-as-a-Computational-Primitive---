@@ -450,9 +450,23 @@ This advantage grows with relationship density. For n=6 (60 relationships), a si
 
 ### 5.5 Limitations
 
-**Bucket collisions at a single harmonic.** Two semantically distinct values that hash to the same bucket are indistinguishable at any single harmonic — this is the same limitation as any hash-based index. However, if the two values produce genuinely different angles (θ_a ≠ θ_b), they should be distinguishable at some higher harmonic n, because cos(n × θ_a) and cos(n × θ_b) must diverge for sufficiently large n if θ_a ≠ θ_b. Each distinct angle would have a unique "harmonic fingerprint" across the full set of integer harmonics — analogous to how two musical instruments playing the same note are distinguished by their overtone profiles, not by the fundamental frequency alone.
+**Bucket collisions at a single harmonic.** Two semantically distinct values that hash to the same bucket are indistinguishable at any single harmonic — this is the same limitation as any hash-based index. However, if the two values produce genuinely different angles (θ_a ≠ θ_b), they are always distinguishable at some higher harmonic n, because cos(n × θ_a) and cos(n × θ_b) must diverge for sufficiently large n if θ_a ≠ θ_b. Each distinct angle has a unique "harmonic fingerprint" across the full set of integer harmonics — analogous to how two musical instruments playing the same note are distinguished by their overtone profiles, not by the fundamental frequency alone.
 
-This suggests that collision resolution can be achieved by probing additional harmonics rather than increasing bucket count — scaling analysis depth rather than storage. We believe this follows from the uniqueness theorem in Fourier analysis (a function on the circle is completely determined by its Fourier coefficients), but this specific application of Fourier uniqueness to hash collision resolution has not been independently verified by a mathematician and should be treated as a conjecture pending review. Bucket count should still be chosen to provide sufficient separation for the expected value space as a practical measure.
+Test 11 validated this empirically and revealed a closed-form resolution formula. The harmonic at which two values with angular difference Δθ become distinguishable (coherence drops below threshold t) is:
+
+```
+n_diverge = ⌈arccos(t) / Δθ⌉
+```
+
+This was verified at three scales with exact agreement between prediction and measurement:
+
+| Angular difference | Predicted n | Actual n |
+|---|---|---|
+| 2° | 13 | 13 |
+| 1° | 26 | 26 |
+| 0.1° | 259 | 259 |
+
+Collision resolution is therefore achieved by probing additional harmonics rather than increasing bucket count — scaling analysis depth rather than storage. The required harmonic is deterministic, not a search. Bucket count should still be chosen to provide sufficient separation for the expected value space as a practical measure to keep resolution harmonics low.
 
 **O(n) scan.** The current implementation scans all entities in the field for every query. At scale, this requires indexing — likely a spatial index on the encoded angles (e.g., angular buckets or a phase-aware tree structure). The math is sound, but the naieve implementation does not outperform a linear scan because it IS a linear scan with a different comparison operator.
 

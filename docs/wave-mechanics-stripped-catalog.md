@@ -349,7 +349,7 @@ Every operation the engine needs, with its computational signature:
 
 **Key observation:** Operations 1–6 are all variations of the same core math: complex number multiplication and angle comparison. The engine's inner loop is tiny. Everything else is configuration.
 
-**Operation 15 note:** When a single-harmonic scan returns multiple candidates with identical coherence (bucket collision), higher harmonics disambiguate them. Each value has a unique *harmonic fingerprint* — the vector of coherence scores across harmonics 1, 2, ..., n. By the Fourier uniqueness theorem, no two distinct values produce the same fingerprint across all harmonics. Collision resolution scales by analysis depth (more harmonics), not storage (more buckets).
+**Operation 15 note:** When a single-harmonic scan returns multiple candidates with identical coherence (bucket collision), higher harmonics disambiguate them. Each value has a unique *harmonic fingerprint* — the vector of coherence scores across harmonics 1, 2, ..., n. By the Fourier uniqueness theorem, no two distinct values produce the same fingerprint across all harmonics. Collision resolution scales by analysis depth (more harmonics), not storage (more buckets). The required harmonic is deterministic: `n_diverge = ⌈arccos(threshold) / Δθ⌉`, validated empirically with exact prediction-to-measurement agreement at angular differences of 2°, 1°, and 0.1°.
 
 ---
 

@@ -32,7 +32,7 @@ The key theoretical insights:
 **Potentially new (the application and synthesis):**
 - Using harmonic coherence as a database query operator, replacing JOINs with frequency-parameterized scans
 - The geometric relationship catalog — a comprehensive taxonomy of relationship types (symmetric, asymmetric, directed, structural, compound) derived from cross-civilizational analysis of circle-division systems, stripped of interpretive layers
-- Harmonic fingerprinting for collision resolution — using multi-harmonic probing to disambiguate phase-encoded values (pending mathematical verification)
+- Harmonic fingerprinting for collision resolution — using multi-harmonic probing to disambiguate phase-encoded values, with a validated closed-form formula: `n = ⌈arccos(t) / Δθ⌉`
 - The proposal that these primitives could serve as a substrate for LLM attention mechanisms
 
 We make no claim of having discovered new mathematics. The contribution, if any, is in recognising that established mathematical tools solve a specific class of problems (relationship-dense queries) more elegantly than the methods currently used, and in compiling the relationship type catalog that defines what the tools can express.
