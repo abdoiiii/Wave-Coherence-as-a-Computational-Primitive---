@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Rust program (~1700 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
+A Rust program (~2200 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
 - Encode values as complex numbers
 - Compute coherence
 - Check if harmonic detection actually works
@@ -30,7 +30,7 @@ wave-test/
 │       ├── advanced.rs      # Tests 10-13: typed reach, fingerprinting, amplification, cycle uniqueness
 │       ├── boundary.rs      # Tests 14-16: orthogonality, wraparound, scale resolution
 │       ├── scaling.rs       # Test 17: density scaling and capacity limits
-│       └── indexing.rs      # Test 18: self-indexing property, bucket index
+│       └── indexing.rs      # Tests 18-20: self-indexing, multi-attr torus, dynamic mutation
 ```
 
 ### Dependencies
@@ -507,6 +507,53 @@ Pass condition:
   - Selectivity is measurably sub-linear across all query types
 ```
 
+### Test 19: Multi-Attribute Torus Index — 2D Compound Queries
+
+```
+Setup:
+  - 500 entities with two attributes ("x" and "y") on a 60×60 bucket grid (3600 cells)
+  - Attribute x uses golden angle spacing (~137.508°)
+  - Attribute y uses silver angle spacing (~222.492°, complement of golden)
+  - Three test suites:
+    1. Exact+exact compound queries at threshold 0.95
+    2. Exact+harmonic compound queries (exact x @ 0.95, harmonic n=3 y @ 0.85)
+    3. 2D vs 1D selectivity comparison
+
+Expected:
+  - All compound queries return identical results to full scan
+  - 2D selectivity improves multiplicatively over 1D (each dimension narrows independently)
+  - Exact+harmonic queries correctly combine two different query types on different attributes
+
+Pass condition:
+  - All compound queries match full scan (zero false positives, zero false negatives)
+  - 2D selectivity measurably better than 1D
+```
+
+### Test 20: Dynamic Mutation — Insert / Remove / Update
+
+```
+Setup:
+  - 200 initial entities on a 60-bucket circle using golden angle spacing
+  - Four mutation phases:
+    1. Remove 50 entities (every 4th: e_0, e_4, e_8, ...)
+    2. Insert 30 new entities with different spacing
+    3. Update (reposition) 20 existing entities to new positions
+    4. Run harmonic queries after all mutations
+  - Ground truth maintained in parallel for comparison
+
+Expected:
+  - Remove correctly excludes entities from subsequent queries
+  - Double-remove returns false (idempotent)
+  - Insert adds new entities that appear in subsequent queries
+  - Update moves entities to new positions (remove + re-insert)
+  - All queries (exact and harmonic) remain correct after every mutation phase
+
+Pass condition:
+  - Queries correct after each mutation phase
+  - Harmonic queries correct after cumulative mutations
+  - No global rebuild needed
+```
+
 ---
 
 ## What Success Looks Like
@@ -530,6 +577,8 @@ If ALL tests pass:
 15. **Scale resolution is perfect** — 360 values, zero false positives, harmonic Nyquist validated (Test 16)
 16. **Density scaling is characterized** — sparse configs clean, degradation predictable, exact match robust at sub-saturation (Test 17)
 17. **Self-indexing is proven** — placement on the circle IS the index, sub-linear queries with no separate index structure (Test 18)
+18. **Multi-attribute torus works** — 2D compound queries with multiplicative selectivity improvement over 1D (Test 19)
+19. **Dynamic mutation is supported** — insert, remove, update as local operations, queries correct throughout (Test 20)
 
 If any test FAILS, we know EXACTLY which part of the math breaks and can either fix it or acknowledge the limitation before writing a single line of database code.
 

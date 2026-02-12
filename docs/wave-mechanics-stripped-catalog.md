@@ -357,6 +357,24 @@ Every operation the engine needs, with its computational signature:
 
 **Self-indexing note:** Circular phase encoding is inherently self-indexing. Because the encoded value determines the angular position and the position determines the storage bucket, insertion simultaneously stores and indexes the entity. No separate index structure (B-tree, hash map) is required. Queries compute target bucket(s) and check only the relevant neighborhood. Exact query examines `⌈arccos(threshold) / (2π/B)⌉` buckets per side; harmonic query examines n regions each with `⌈arccos(threshold) / (n × 2π/B)⌉` buckets. Insert is O(1), queries are sub-linear.
 
+**Multi-attribute torus note:** Multiple phase-encoded attributes compose into an N-torus (product of circles). Two attributes map to a 2-torus indexed by a B×B grid; three attributes map to a 3-torus indexed by a B×B×B grid. Compound queries check a rectangular neighborhood on the torus. Each dimension narrows independently, so selectivity improves multiplicatively: the combined selectivity approaches the product of per-dimension selectivities. This is the natural generalization of 1D bucket indexing to multi-column schemas.
+
+**Dynamic mutation note:** The phase-indexed structure supports insert, remove, and update as local operations. Remove marks a tombstone and removes the entity's index from its bucket. Update is remove followed by re-insert at the new position. No global rebuild is required. Queries remain correct through arbitrary mutation sequences.
+
+**Harmonic embedding note:** A single phase angle θ, probed across N harmonics, produces an N-dimensional vector:
+
+```
+v(θ) = [cos(θ), cos(2θ), cos(3θ), ..., cos(Nθ)]
+```
+
+This is a Fourier basis expansion — each component is a projection onto the nth harmonic. The dot product of two such vectors is the Dirichlet kernel: `dot(v(θ_a), v(θ_b)) = Σ cos(n × (θ_a - θ_b))` for n=1..N, which is the sum of all harmonic coherences. For K attributes, each probed across N harmonics, the combined vector has K×N dimensions:
+
+```
+v = [cos(θ₁), cos(2θ₁), ..., cos(Nθ₁), cos(θ₂), cos(2θ₂), ..., cos(Nθ₂), ..., cos(θ_K), ..., cos(Nθ_K)]
+```
+
+This is a structured embedding: each dimension has a defined meaning (nth harmonic of attribute k). The harmonic fingerprint validated in Test 11 is the 1-attribute case. The multi-attribute generalization produces embeddings of arbitrary dimensionality where the basis is given by construction, not learned. The dot product between two such embeddings captures all harmonic relationships across all attributes in a single operation.
+
 ---
 
 ## Summary

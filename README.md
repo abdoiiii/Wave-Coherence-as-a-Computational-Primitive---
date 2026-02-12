@@ -9,7 +9,7 @@ A validated mathematical framework that uses phase encoding on the unit circle a
 The framework includes:
 
 - **A geometric relationship catalog** — every structural relationship pattern discoverable on a phase circle, stripped of all domain-specific interpretation, expressed as pure mathematics
-- **A validation paper** — 18 tests, 4 corrective findings, all passing, with reproducible Rust code
+- **A validation paper** — 20 tests, 4 corrective findings, all passing, with reproducible Rust code
 - **An architecture proposal** — applying wave mechanics as a substrate for LLM attention and knowledge representation
 
 ## Origin
@@ -45,10 +45,10 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 |------|-------------|
 | `docs/geometric-relationship-catalog.md` | Complete catalog of geometric relationship patterns across all source traditions (5 traditions, 26 division systems, 35+ relationship types) |
 | `docs/wave-mechanics-stripped-catalog.md` | Pure mathematical specification — all domain-specific interpretation removed, only structural geometry remains |
-| `docs/wave-test-program.md` | Test program specification — 18 tests validating the core math |
+| `docs/wave-test-program.md` | Test program specification — 20 tests validating the core math |
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
 | `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, four corrective findings from running the code |
-| `src/` | Rust source code for the validation test suite (~1700 lines, zero dependencies) |
+| `src/` | Rust source code for the validation test suite (~2200 lines, zero dependencies) |
 
 ## Reproduce the Validation
 
@@ -81,8 +81,10 @@ Test 15: PASS  (Wraparound: symmetric scores at 0°/360° boundary)
 Test 16: PASS  (Scale: 360 values, 0 false positives, harmonic-scaled Nyquist validated)
 Test 17: PASS  (Density scaling: sparse clean, degradation at density, harmonic scales with separation)
 Test 18: PASS  (Bucket index: all queries match full scan, ~13% selectivity at 1000 entities)
+Test 19: PASS  (2D torus index: compound queries correct, multiplicative selectivity over 1D)
+Test 20: PASS  (Dynamic mutation: remove/insert/update, all queries correct throughout)
 
-=== RESULTS: 18 passed, 0 failed out of 18 ===
+=== RESULTS: 20 passed, 0 failed out of 20 ===
 ALL TESTS PASSED
 ```
 
@@ -102,6 +104,10 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 
 **Test 18 proves the self-indexing property.** A BucketIndex that uses the encoded phase position as the bucket address — no separate index structure — produces results identical to a full scan while examining only a fraction of entities. At 1000 entities on 360 buckets: exact match at threshold 0.999 examines 2.0% of entities, exact match at 0.95 examines 10.7%, and harmonic queries examine 15-23%. The circle IS the index: insertion is O(1), and queries are sub-linear with zero maintenance overhead.
 
+**Test 19 validates multi-attribute torus indexing.** Extending the 1D bucket index to a 2D torus (B×B grid) enables compound queries that narrow on both attributes simultaneously. At 500 entities on a 60×60 grid: exact+exact queries and exact+harmonic queries all match full scan exactly. Selectivity improvement over 1D is multiplicative — each dimension narrows independently. This bridges the gap between single-attribute proof and real multi-column database viability.
+
+**Test 20 proves dynamic mutation support.** Insert, remove, and update operations work as local mutations on the circle without global rebuild. Starting from 200 entities: 50 removed, 30 inserted, 20 repositioned — all queries (exact and harmonic) remain correct throughout. Remove is tombstone + bucket cleanup. Update is remove + re-insert. This is what separates a mathematical proof from a working database.
+
 **Four corrective findings tighten the design:**
 
 1. **Bucket resolution imposes a threshold floor.** Exact match threshold must exceed `cos(2π / bucket_count)` to avoid neighbor leakage. Analogous to the Nyquist limit in signal processing.
@@ -112,14 +118,21 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 ## Potential Applications
 
 ### Database Query Engine
-Phase-encoded entities with coherence-based scanning for relationship-dense data. Compound relational queries (harmonic family + structural pair + directed dependency + domain relevance) computed as interference patterns rather than multiple JOINs. The self-indexing property (Test 18) means insertion automatically indexes entities by their encoded position, with sub-linear query performance and zero index maintenance.
+Phase-encoded entities with coherence-based scanning for relationship-dense data. Compound relational queries (harmonic family + structural pair + directed dependency + domain relevance) computed as interference patterns rather than multiple JOINs. The self-indexing property (Test 18) means insertion automatically indexes entities by their encoded position, with sub-linear query performance and zero index maintenance. Multi-attribute torus indexing (Test 19) enables compound queries across multiple columns with multiplicative selectivity. Dynamic mutation (Test 20) confirms insert/remove/update as local operations requiring no global rebuild.
 
-### LLM Architecture
+### LLM Architecture — Harmonic Embeddings as Structural Priors
+
+A single phase angle probed across N harmonics produces an N-dimensional vector: `v(θ) = [cos(θ), cos(2θ), ..., cos(Nθ)]`. For K attributes × N harmonics, this yields a K×N-dimensional structured embedding where every dimension has a defined meaning. This is a Fourier basis expansion — the harmonic fingerprint validated in Test 11, generalized to arbitrary dimensionality.
+
+The implication for LLM architecture: harmonic embeddings could serve as **structural priors** — pre-built geometric structure that reduces what the network needs to learn through training. Specific applications:
+
 - Attention heads parameterized by harmonic frequency instead of learned weights
-- Multi-resolution positional encoding matching the tier system
+- Positional encoding via harmonic phase (RoPE already uses this principle for one dimension; harmonic encoding generalizes it to N dimensions with relationship-typed structure)
 - Context windows as resonance fields where relevance emerges from constructive interference
 - Directed phase relationships as native reasoning chain primitives
 - Infinite harmonic capacity without additional parameters
+
+The hypothesis: learned embeddings discover through gradient descent a structure that harmonic encoding provides by construction. If true, pre-building the harmonic structure could reduce training cost, improve interpretability, and lower energy consumption.
 
 ### Knowledge Graph / RAG
 Typed retrieval that surfaces not just "documents about X" but "documents about things that enable X" or "documents about things X conflicts with" — relationship-typed retrieval that cosine similarity alone cannot express.
