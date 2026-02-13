@@ -141,7 +141,10 @@ Typed retrieval that surfaces not just "documents about X" but "documents about 
 
 Listopad (2025) independently developed ResonanceDB, a phase-aware retrieval system that scores document relevance using resonance-based coherence rather than cosine similarity over flat embeddings. Their empirical results validate that phase-encoded scoring outperforms standard vector retrieval for relationship-sensitive queries. The present work extends this direction from the retrieval layer to the encoding substrate itself — proposing harmonic coherence not as a scoring alternative bolted onto existing embeddings, but as the foundational computational primitive for encoding, querying, and discovering relationships.
 
+Wang (2025) proposed a more radical departure: the Self-Resonance Field (SRF) architecture, which replaces transformer self-attention entirely with wave interference and phase superposition. Tokens become waveform imprints with spectral signatures; semantic matching operates via coherence estimation between sub-bands rather than dot-product attention. Critically, Wang's architecture uses partial resonance — local spectral matching rather than global all-to-all attention — analogous to the sub-linear bucket selectivity demonstrated in Tests 18–19 of the present work. Their simulation results show improvements over GPT-4 Turbo across six benchmarks (ROUGE-L, METEOR, Pass@k, MMLU, Accuracy, ARC-AGI). While the results are simulation-based and not yet validated on real hardware, the architecture provides independent evidence that wave mechanics can serve as a viable computational substrate for language modeling — the same hypothesis proposed in Section 5.2 of this work from the mathematical primitives side.
+
 - Listopad, S. (2025). *Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval.* arXiv:2509.09691. https://arxiv.org/abs/2509.09691
+- Wang, L. (2025). *Defierithos: The Lonely Warrior Rises from Resonance — A Self-Resonance Architecture Beyond Attention.* Submitted to NeurIPS 2025.
 
 ## Attribution
 

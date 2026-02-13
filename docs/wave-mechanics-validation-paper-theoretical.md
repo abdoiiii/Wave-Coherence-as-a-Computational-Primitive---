@@ -24,7 +24,7 @@ Consider a system where entities can be:
 
 In a traditional relational schema, each of these requires distinct tables, indexes, and query patterns. The combinatorial surface grows rapidly.
 
-Recent work by Listopad (2025) demonstrated that phase-aware scoring outperforms cosine similarity for relationship-sensitive retrieval in their ResonanceDB system [1]. Their approach validates the utility of resonance-based coherence as a retrieval operator. The present work asks a more fundamental question: whether phase encoding can serve as the computational substrate itself, not merely a scoring layer over existing embeddings.
+Recent work by Listopad (2025) demonstrated that phase-aware scoring outperforms cosine similarity for relationship-sensitive retrieval in their ResonanceDB system [1]. Their approach validates the utility of resonance-based coherence as a retrieval operator. More radically, Wang (2025) proposed the Self-Resonance Field (SRF) architecture, which replaces transformer self-attention entirely with wave interference and phase superposition, using coherence estimation between spectral sub-bands rather than dot-product attention [2]. Their simulation results show improvements over GPT-4 Turbo across six benchmarks, providing independent evidence that wave mechanics can serve as a viable computational substrate for language modeling. The present work asks the foundational question underlying both directions: whether phase encoding and harmonic coherence can serve as the computational substrate itself — validated here through formal mathematical proofs on database queries, with the LLM application proposed as a hypothesis supported by these independent implementations.
 
 ### 1.2 The Hypothesis
 
@@ -869,6 +869,8 @@ The hypothesis holds. The mathematical foundation and the structural properties 
 ## References
 
 [1] Listopad, S. (2025). Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval. arXiv:2509.09691. https://arxiv.org/abs/2509.09691
+
+[2] Wang, L. (2025). Defierithos: The Lonely Warrior Rises from Resonance — A Self-Resonance Architecture Beyond Attention. Submitted to NeurIPS 2025.
 
 ---
 
