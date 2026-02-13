@@ -49,8 +49,11 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
 | `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, four corrective findings from running the code |
 | `src/` | Rust source code for the validation test suite (~2400 lines, zero dependencies) |
+| `python/` | Python translation of the full test suite (Python 3.10+, zero dependencies) |
 
 ## Reproduce the Validation
+
+### Rust (primary)
 
 ```bash
 git clone <this-repo>
@@ -58,7 +61,20 @@ cd wave-coherence-computational-primitive
 cargo run
 ```
 
-Expected output:
+Requires only a Rust toolchain (edition 2024). No external dependencies.
+
+### Python
+
+```bash
+cd python
+python run_tests.py
+```
+
+Requires Python 3.10+. No external dependencies (uses only `math` from stdlib).
+
+Both versions produce identical results: 21 tests, all passing.
+
+### Expected Output
 
 ```
 === Wave Mechanics Test Program ===
@@ -88,8 +104,6 @@ Test 21: PASS  (Harmonic sweep: 5 planted relationships recovered, cosine simila
 === RESULTS: 21 passed, 0 failed out of 21 ===
 ALL TESTS PASSED
 ```
-
-Requires only a Rust toolchain (edition 2024). No external dependencies.
 
 ## Key Results
 
