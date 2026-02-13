@@ -4,7 +4,7 @@
 
 ## Abstract
 
-We present empirical validation of a phase-encoding scheme that maps discrete attribute values onto the unit circle and uses coherence — the cosine of angular difference — as a universal relationship detection operator. Across 20 structured tests, we demonstrate that a single mathematical function, `cos(n * (θ_a - θ_b))`, correctly identifies exact matches, harmonic families, opposition relationships, and fuzzy proximity, matching or exceeding the expressiveness of traditional WHERE and JOIN operations for relationship-heavy queries. We further validate that this geometric core composes cleanly with structural pair tables, directed cycle traversal, asymmetric typed reach, multi-attribute conjunction, harmonic fingerprinting for collision resolution, mutual reference amplification, exhaustive cycle relationship uniqueness, harmonic orthogonality across frequencies, phase wraparound at the 0°/360° boundary, scale resolution across 360 distinct values, density scaling limits across configurations from sparse to saturated, a self-indexing property where the encoded phase position serves as the index address, multi-attribute torus indexing where compound queries narrow on multiple dimensions with multiplicative selectivity, and dynamic mutation support where insert/remove/update operations work as local circle operations without global rebuild. Four corrective findings emerged during testing: bucket resolution imposes a minimum coherence threshold for exact matching, cosine-based orb falloff is steeper than linear approximation suggests, asymmetric entity reach requires directed (0-360) rather than shortest-path (0-180) angular distance, and the Nyquist-like threshold floor scales with harmonic number. All 20 tests pass, confirming the mathematical soundness of the approach as a foundation for a wave-mechanics query engine.
+We present empirical validation of a phase-encoding scheme that maps discrete attribute values onto the unit circle and uses coherence — the cosine of angular difference — as a universal relationship detection operator. Across 21 structured tests, we demonstrate that a single mathematical function, `cos(n * (θ_a - θ_b))`, correctly identifies exact matches, harmonic families, opposition relationships, and fuzzy proximity, matching or exceeding the expressiveness of traditional WHERE and JOIN operations for relationship-heavy queries. We further validate that this geometric core composes cleanly with structural pair tables, directed cycle traversal, asymmetric typed reach, multi-attribute conjunction, harmonic fingerprinting for collision resolution, mutual reference amplification, exhaustive cycle relationship uniqueness, harmonic orthogonality across frequencies, phase wraparound at the 0°/360° boundary, scale resolution across 360 distinct values, density scaling limits across configurations from sparse to saturated, a self-indexing property where the encoded phase position serves as the index address, multi-attribute torus indexing where compound queries narrow on multiple dimensions with multiplicative selectivity, dynamic mutation support where insert/remove/update operations work as local circle operations without global rebuild, and a harmonic sweep demonstrating that standard cosine similarity is provably blind to harmonic structure in embedding vectors while a per-channel decomposition recovers it completely. Four corrective findings emerged during testing: bucket resolution imposes a minimum coherence threshold for exact matching, cosine-based orb falloff is steeper than linear approximation suggests, asymmetric entity reach requires directed (0-360) rather than shortest-path (0-180) angular distance, and the Nyquist-like threshold floor scales with harmonic number. All 21 tests pass, confirming the mathematical soundness of the approach as a foundation for a wave-mechanics query engine.
 
 ---
 
@@ -131,6 +131,7 @@ The test program is implemented in Rust (edition 2024) with zero external depend
 | `tests/boundary.rs` | Tests 14–16: orthogonality, wraparound, scale | ~180 |
 | `tests/scaling.rs` | Test 17: density scaling and capacity limits | ~200 |
 | `tests/indexing.rs` | Tests 18–20: self-indexing, multi-attr torus, dynamic mutation | ~500 |
+| `tests/sweep.rs` | Test 21: harmonic sweep, cosine similarity blindness | ~140 |
 
 ### 3.2 Test Matrix
 
@@ -158,6 +159,7 @@ Each test targets a specific claim or operation:
 | 18 | Self-indexing | Bucket index matches full scan with sub-linear entity examination |
 | 19 | Multi-attr torus | 2D compound queries with multiplicative selectivity over 1D |
 | 20 | Dynamic mutation | Insert/remove/update as local operations, queries correct throughout |
+| 21 | Harmonic sweep | Cosine similarity blindness — per-channel decomposition recovers hidden structure |
 
 ---
 
@@ -701,13 +703,76 @@ At 360 buckets:
 
 **Verdict:** PASS. All queries correct after every mutation phase, for both exact and harmonic query types.
 
+### 4.21 Test 21: Harmonic Sweep — Cosine Similarity Blindness
+
+**Hypothesis:** Standard cosine similarity, which sums all harmonic channels into a single scalar, destroys per-channel structure. A harmonic sweep examining each channel independently should recover relationships that cosine similarity reports as zero.
+
+**Setup:** Eight letters encoded at known phase angles: A=0°, B=120°, C=180°, D=90°, E=60°, F=72°, G=37°, H=143°. Five pairs have deliberate harmonic relationships planted at known frequencies. G and H serve as noise controls. Each letter is converted to a 12-dimensional harmonic embedding vector: v(θ) = [cos(θ), cos(2θ), ..., cos(12θ)].
+
+**Results — Cosine similarity (standard ML):**
+
+| Pair | Cosine Similarity | Known Relationship |
+|------|------------------|--------------------|
+| A-B | 0.0000 | Triadic (120°) |
+| A-C | 0.0000 | Opposition (180°) |
+| A-D | 0.0000 | Quadrant (90°) |
+| A-E | 0.0000 | Sextile (60°) |
+| A-F | -0.0602 | Pentagonal (72°) |
+
+All five planted relationships read as zero or near-zero. Cosine similarity sees no structure.
+
+**Results — Harmonic sweep:**
+
+| Pair | Harmonic | Coherence | Status |
+|------|----------|-----------|--------|
+| A-B | n=3 | 1.000000 | DETECTED |
+| A-C | n=2 | 1.000000 | DETECTED |
+| A-D | n=4 | 1.000000 | DETECTED |
+| A-E | n=6 | 1.000000 | DETECTED |
+| A-F | n=5 | 1.000000 | DETECTED |
+| A-G | n=1..6 | (none above threshold) | CLEAN |
+| A-H | n=1..6 | (none above threshold) | CLEAN |
+
+Five out of five planted relationships recovered. Zero false positives on noise controls.
+
+**A-B decomposition (why the sum cancels):**
+
+| Harmonic | Coherence | Role |
+|----------|-----------|------|
+| n=3 | 1.0000 | Signal (120° × 3 = 360°) |
+| n=6 | 1.0000 | Signal (120° × 6 = 720°) |
+| n=9 | 1.0000 | Signal (120° × 9 = 1080°) |
+| n=12 | 1.0000 | Signal (120° × 12 = 1440°) |
+| n=1,2,4,5,7,8,10,11 | -0.5000 each | Noise |
+
+Sum: 4 × 1.0 + 8 × (-0.5) = 0.0. Cosine similarity reports zero because the signal channels cancel with the noise channels.
+
+**Spectral profile (pairs with exact coherence at each harmonic):**
+
+| Harmonic | Pairs Detected | Count |
+|----------|---------------|-------|
+| n=6 | AB, AC, AD, AE, BC, BD, BE, CD, CE, DE | 10 |
+| n=12 | AB, AC, AD, AE, BC, BD, BE, CD, CE, DE | 10 |
+| n=3 | AB, AC, AE, BC, BE, CE | 6 |
+| n=9 | AB, AC, AE, BC, BE, CE | 6 |
+| n=10 | AC, AD, AF, CD, CF, DF | 6 |
+| n=2,4,8 | AC, AD, CD | 3 each |
+| n=5 | AC, AF, CF | 3 |
+| n=1,7,11 | AC only | 1 each |
+
+This distribution is the spectral fingerprint of the encoding — a characteristic pattern that cosine similarity collapses to a single number.
+
+**Key finding:** Cosine similarity is provably blind to harmonic structure because the dot product sums all frequency channels into one scalar. When positive and negative coherence channels cancel, the sum is zero regardless of per-channel signal strength. The harmonic sweep decomposes the scalar back into its independent channels, recovering the structure. This has direct implications for ML: if real model embeddings contain harmonic organization, cosine similarity cannot detect it, and the harmonic sweep provides the first tool capable of doing so.
+
+**Verdict:** PASS. All 5 planted relationships recovered at correct harmonics, cosine similarity blind to all 5, zero false positives on noise controls.
+
 ---
 
 ## 5. Discussion
 
 ### 5.1 What the Tests Prove
 
-The twenty tests collectively validate nine properties:
+The twenty-one tests collectively validate ten properties:
 
 **Correctness (Tests 1, 8, 15, 16):** Phase-encoded coherence scanning produces result sets identical to linear value comparison. The encoding is lossless within bucket resolution, the coherence function is a faithful equality operator at sufficient threshold, the 0°/360° boundary introduces zero asymmetry (Test 15), and the system resolves 360 distinct values with zero false positives (Test 16).
 
@@ -734,6 +799,8 @@ No operation interferes with another. The geometric and structural query paths a
 **Multi-Attribute Composition (Test 19):** The 1D bucket index generalizes to an N-dimensional torus by taking the product of circles. A 2D grid (B×B cells) indexes two attributes simultaneously, enabling compound queries that narrow on both dimensions. Selectivity improvement is multiplicative: each dimension filters independently, and the combined selectivity approaches the product of individual selectivities. This validates that the phase-encoding substrate scales to multi-column schemas.
 
 **Dynamic Mutability (Test 20):** The phase-indexed structure supports insert, remove, and update as local operations. Remove marks a tombstone and cleans the bucket reference. Update is remove followed by re-insert. No global rebuild is required. Queries remain correct through arbitrary sequences of mutations. This validates that the structure is not merely a static proof but a viable foundation for a mutable database.
+
+**Cosine Similarity Blindness (Test 21):** Standard cosine similarity — the primary comparison measure used across machine learning — is provably blind to harmonic structure in embedding vectors. Eight letters encoded at known phase angles with deliberate harmonic relationships produce 12-dimensional harmonic embedding vectors. Cosine similarity between triadic partners (0° and 120° apart) reads exactly 0.0000, because the sum of harmonic coherences across all channels cancels: four channels at +1.000 and eight at -0.500 sum to zero. A per-channel harmonic sweep recovers all five planted relationships at exactly the correct harmonics with zero false positives on noise controls. This demonstrates that the dot product (and therefore cosine similarity) destroys the harmonic decomposition by aggregating independent frequency channels into a single scalar. The spectral profile — the distribution of coherent pairs across harmonics — provides a fingerprint of the encoding that cosine similarity cannot express.
 
 ### 5.2 Harmonic Fingerprints as Structured Embeddings
 
@@ -856,11 +923,11 @@ Collision resolution is therefore achieved by probing additional harmonics rathe
 
 ## 6. Conclusion
 
-The twenty tests validate that phase-encoded coherence is a mathematically sound foundation for relationship detection. The core operation — `cos(n * (θ_a - θ_b))` — is correct, expressive, and composable. It handles exact matching, harmonic family detection, opposition, fuzzy proximity, multi-attribute conjunction, harmonic fingerprinting, mutual amplification, exhaustive cycle partitioning, cross-harmonic independence, boundary wraparound, 360-value scale resolution, density scaling characterization, self-indexed sub-linear querying, multi-attribute compound queries on a torus, and dynamic mutation — with a single function parameterized by harmonic number and tolerance.
+The twenty-one tests validate that phase-encoded coherence is a mathematically sound foundation for relationship detection. The core operation — `cos(n * (θ_a - θ_b))` — is correct, expressive, and composable. It handles exact matching, harmonic family detection, opposition, fuzzy proximity, multi-attribute conjunction, harmonic fingerprinting, mutual amplification, exhaustive cycle partitioning, cross-harmonic independence, boundary wraparound, 360-value scale resolution, density scaling characterization, self-indexed sub-linear querying, multi-attribute compound queries on a torus, dynamic mutation, and harmonic sweep analysis revealing cosine similarity blindness — with a single function parameterized by harmonic number and tolerance.
 
 Four corrective findings tighten the design constraints: thresholds must account for bucket resolution, orb falloff follows cosine (not linear) curves, asymmetric operations require directed angular distance, and the Nyquist-like threshold floor scales linearly with harmonic number. None of these invalidate the approach; they are configuration requirements that the engine must enforce.
 
-The strongest results are Test 9 (a single harmonic scan discovers relationship groups that require multiple explicit JOINs), Test 11 (harmonic fingerprinting resolves collisions with a deterministic closed-form formula), Test 14 (harmonics operate as completely independent selectors with zero cross-talk), Test 16 (360 distinct values resolved with zero false positives, revealing the harmonic-scaled Nyquist limit), Test 17 (density scaling behavior characterized across eight configurations, confirming exact match robustness at sub-saturated densities and predictable harmonic degradation), Test 18 (the self-indexing property — circular encoding inherently provides sub-linear query performance without a separate index structure), Test 19 (multi-attribute torus indexing — compound queries across multiple columns with multiplicative selectivity improvement), and Test 20 (dynamic mutation — insert, remove, and update as local operations with query correctness maintained throughout).
+The strongest results are Test 9 (a single harmonic scan discovers relationship groups that require multiple explicit JOINs), Test 11 (harmonic fingerprinting resolves collisions with a deterministic closed-form formula), Test 14 (harmonics operate as completely independent selectors with zero cross-talk), Test 16 (360 distinct values resolved with zero false positives, revealing the harmonic-scaled Nyquist limit), Test 17 (density scaling behavior characterized across eight configurations, confirming exact match robustness at sub-saturated densities and predictable harmonic degradation), Test 18 (the self-indexing property — circular encoding inherently provides sub-linear query performance without a separate index structure), Test 19 (multi-attribute torus indexing — compound queries across multiple columns with multiplicative selectivity improvement), Test 20 (dynamic mutation — insert, remove, and update as local operations with query correctness maintained throughout), and Test 21 (cosine similarity blindness — standard ML comparison provably destroys harmonic structure that a per-channel sweep recovers completely, providing the first tool for probing whether real model embeddings contain hidden harmonic organization).
 
 The hypothesis holds. The mathematical foundation and the structural properties needed for a database — indexing, multi-column queries, and mutability — are all validated. The next step is building the database layer.
 
@@ -893,7 +960,7 @@ All test parameters are deterministic. Results are reproducible across platforms
 wave-test/
 ├── Cargo.toml
 ├── src/
-│   ├── main.rs              # Test runner (~44 lines)
+│   ├── main.rs              # Test runner (~46 lines)
 │   ├── wave.rs              # Phase, WavePacket, coherence (~85 lines)
 │   ├── field.rs             # ResonanceField, BucketIndex, MultiAttrBucketIndex (~400 lines)
 │   ├── relationships.rs     # DirectedCycle, PairTable (~60 lines)
@@ -905,10 +972,11 @@ wave-test/
 │       ├── advanced.rs      # Tests 10-13 (~290 lines)
 │       ├── boundary.rs      # Tests 14-16 (~180 lines)
 │       ├── scaling.rs       # Test 17 (~200 lines)
-│       └── indexing.rs      # Tests 18-20 (~500 lines)
+│       ├── indexing.rs      # Tests 18-20 (~500 lines)
+│       └── sweep.rs         # Test 21 (~140 lines)
 ```
 
-Total: ~2200 lines of Rust, zero dependencies.
+Total: ~2400 lines of Rust, zero dependencies.
 
 ## Appendix C: Raw Test Output
 
@@ -935,7 +1003,8 @@ Test 17: PASS  (Density scaling: sparse clean, degradation at density, harmonic 
 Test 18: PASS  (Bucket index: all queries match full scan, ~13% selectivity at 1000 entities)
 Test 19: PASS  (2D torus index: compound queries correct, multiplicative selectivity over 1D)
 Test 20: PASS  (Dynamic mutation: remove/insert/update, all queries correct throughout)
+Test 21: PASS  (Harmonic sweep: 5 planted relationships recovered, cosine similarity blind to all, 0 false positives)
 
-=== RESULTS: 20 passed, 0 failed out of 20 ===
+=== RESULTS: 21 passed, 0 failed out of 21 ===
 ALL TESTS PASSED
 ```

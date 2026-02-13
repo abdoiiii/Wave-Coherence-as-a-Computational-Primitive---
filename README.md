@@ -48,7 +48,7 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 | `docs/wave-test-program.md` | Test program specification — 20 tests validating the core math |
 | `docs/wave-mechanics-validation-paper-theoretical.md` | Pre-test validation paper — formal framework and expected results (written before code execution) |
 | `docs/wave-mechanics-validation-paper-empirical.md` | Post-test validation paper — actual results, real numbers, four corrective findings from running the code |
-| `src/` | Rust source code for the validation test suite (~2200 lines, zero dependencies) |
+| `src/` | Rust source code for the validation test suite (~2400 lines, zero dependencies) |
 
 ## Reproduce the Validation
 
@@ -83,8 +83,9 @@ Test 17: PASS  (Density scaling: sparse clean, degradation at density, harmonic 
 Test 18: PASS  (Bucket index: all queries match full scan, ~13% selectivity at 1000 entities)
 Test 19: PASS  (2D torus index: compound queries correct, multiplicative selectivity over 1D)
 Test 20: PASS  (Dynamic mutation: remove/insert/update, all queries correct throughout)
+Test 21: PASS  (Harmonic sweep: 5 planted relationships recovered, cosine similarity blind to all, 0 false positives)
 
-=== RESULTS: 20 passed, 0 failed out of 20 ===
+=== RESULTS: 21 passed, 0 failed out of 21 ===
 ALL TESTS PASSED
 ```
 
@@ -107,6 +108,8 @@ Requires only a Rust toolchain (edition 2024). No external dependencies.
 **Test 19 validates multi-attribute torus indexing.** Extending the 1D bucket index to a 2D torus (B×B grid) enables compound queries that narrow on both attributes simultaneously. At 500 entities on a 60×60 grid: exact+exact queries and exact+harmonic queries all match full scan exactly. Selectivity improvement over 1D is multiplicative — each dimension narrows independently. This bridges the gap between single-attribute proof and real multi-column database viability.
 
 **Test 20 proves dynamic mutation support.** Insert, remove, and update operations work as local mutations on the circle without global rebuild. Starting from 200 entities: 50 removed, 30 inserted, 20 repositioned — all queries (exact and harmonic) remain correct throughout. Remove is tombstone + bucket cleanup. Update is remove + re-insert. This is what separates a mathematical proof from a working database.
+
+**Test 21 demonstrates cosine similarity blindness.** Eight letters encoded at known phase angles with deliberate harmonic relationships. Cosine similarity between triadic partners (A at 0°, B at 120°) = **0.0000** — reporting "no relationship." A harmonic sweep across individual channels recovers coherence = **1.0000** at n=3. All 5 planted relationships (triadic, opposition, quadrant, sextile, pentagonal) recovered at exactly the correct harmonic with zero false positives on noise controls. The sum of harmonic channels cancels to zero, destroying the per-channel structure. This proves that standard cosine similarity — the primary comparison measure used across ML — is blind to harmonic organization in vectors. The harmonic sweep provides a tool to test whether real model embeddings contain this hidden structure.
 
 **Four corrective findings tighten the design:**
 

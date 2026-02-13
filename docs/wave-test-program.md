@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A Rust program (~2200 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
+A Rust program (~2400 lines) that validates the core math WITHOUT any database. No SurrealDB, no MCP, no server. Just:
 - Encode values as complex numbers
 - Compute coherence
 - Check if harmonic detection actually works
@@ -30,7 +30,8 @@ wave-test/
 │       ├── advanced.rs      # Tests 10-13: typed reach, fingerprinting, amplification, cycle uniqueness
 │       ├── boundary.rs      # Tests 14-16: orthogonality, wraparound, scale resolution
 │       ├── scaling.rs       # Test 17: density scaling and capacity limits
-│       └── indexing.rs      # Tests 18-20: self-indexing, multi-attr torus, dynamic mutation
+│       ├── indexing.rs      # Tests 18-20: self-indexing, multi-attr torus, dynamic mutation
+│       └── sweep.rs         # Test 21: harmonic sweep, cosine similarity blindness
 ```
 
 ### Dependencies
@@ -554,6 +555,45 @@ Pass condition:
   - No global rebuild needed
 ```
 
+### Test 21: Harmonic Sweep — Cosine Similarity Blindness
+
+```
+Setup:
+  - 8 letters encoded at known phase angles on the unit circle:
+    A=0°, B=120°, C=180°, D=90°, E=60°, F=72°, G=37°, H=143°
+  - 5 pairs have deliberate harmonic relationships:
+    A-B triadic (n=3), A-C opposition (n=2), A-D quadrant (n=4),
+    A-E sextile (n=6), A-F pentagonal (n=5)
+  - G and H are noise controls (no clean harmonic with A)
+  - Generate 12-dimensional harmonic embedding vectors:
+    v(θ) = [cos(θ), cos(2θ), ..., cos(12θ)]
+
+Phase 1: Compute cosine similarity (standard ML method)
+  - All 5 planted relationships read as ~0.0000
+
+Phase 2: Harmonic sweep — examine each channel independently
+  - For each pair, compute coherence at each harmonic n=1..12
+  - Detect where |coherence| > 0.999
+
+Phase 3: Validate detections
+  - All 5 planted relationships detected at correct harmonic
+  - Zero false positives on noise controls
+
+Phase 4: Demonstrate the decomposition
+  - A-B: 4 channels at coherence 1.000 (n=3,6,9,12),
+    8 channels at -0.500 → sum cancels to 0.0000
+
+Phase 5: Spectral profile
+  - Energy distribution across harmonics for all pairs
+  - Each harmonic has a characteristic pattern of active pairs
+
+Pass condition:
+  - All 5 planted relationships recovered at correct harmonics
+  - Zero false positives on noise controls
+  - Cosine similarity reads ~0 for all planted relationships
+  - Per-channel coherence reads 1.0 at correct harmonics
+```
+
 ---
 
 ## What Success Looks Like
@@ -579,6 +619,7 @@ If ALL tests pass:
 17. **Self-indexing is proven** — placement on the circle IS the index, sub-linear queries with no separate index structure (Test 18)
 18. **Multi-attribute torus works** — 2D compound queries with multiplicative selectivity improvement over 1D (Test 19)
 19. **Dynamic mutation is supported** — insert, remove, update as local operations, queries correct throughout (Test 20)
+20. **Cosine similarity is blind to harmonic structure** — standard ML comparison reads 0.0000 for pairs with perfect harmonic coherence; the sweep method recovers all planted structure (Test 21)
 
 If any test FAILS, we know EXACTLY which part of the math breaks and can either fix it or acknowledge the limitation before writing a single line of database code.
 

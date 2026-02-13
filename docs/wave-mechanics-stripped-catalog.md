@@ -375,6 +375,8 @@ v = [cos(θ₁), cos(2θ₁), ..., cos(Nθ₁), cos(θ₂), cos(2θ₂), ..., co
 
 This is a structured embedding: each dimension has a defined meaning (nth harmonic of attribute k). The harmonic fingerprint validated in Test 11 is the 1-attribute case. The multi-attribute generalization produces embeddings of arbitrary dimensionality where the basis is given by construction, not learned. The dot product between two such embeddings captures all harmonic relationships across all attributes in a single operation.
 
+**Cosine similarity blindness note:** The dot product (and therefore cosine similarity) sums all harmonic channels into a single scalar: `dot(v(θ_a), v(θ_b)) = Σ cos(n × (θ_a - θ_b))`. When positive and negative channels cancel, the sum is zero regardless of per-channel signal strength. For two angles 120° apart, harmonics n=3,6,9,12 produce coherence +1.0 while harmonics n=1,2,4,5,7,8,10,11 produce -0.5 — the sum is exactly 0. Cosine similarity reports "no relationship" for a pair with perfect triadic coherence. A harmonic sweep — evaluating `cos(n × Δθ)` at each harmonic independently — recovers the per-channel structure that the aggregate destroys. Test 21 validates this with 5 planted relationships recovered at 0 false positives. This has implications for ML: if learned embeddings contain harmonic structure, cosine similarity cannot detect it.
+
 ---
 
 ## Summary
