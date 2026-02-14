@@ -160,7 +160,13 @@ Listopad (2025) independently developed ResonanceDB, a phase-aware retrieval sys
 
 Wang (2025) proposed a more radical departure: the Self-Resonance Field (SRF) architecture, which replaces transformer self-attention entirely with wave interference and phase superposition. Tokens become waveform imprints with spectral signatures; semantic matching operates via coherence estimation between sub-bands rather than dot-product attention. Critically, Wang's architecture uses partial resonance — local spectral matching rather than global all-to-all attention — analogous to the sub-linear bucket selectivity demonstrated in Tests 18–19 of the present work. Their simulation results show improvements over GPT-4 Turbo across six benchmarks (ROUGE-L, METEOR, Pass@k, MMLU, Accuracy, ARC-AGI). While the results are simulation-based and not yet validated on real hardware, the architecture provides independent evidence that wave mechanics can serve as a viable computational substrate for language modeling — the same hypothesis proposed in Section 5.2 of this work from the mathematical primitives side.
 
-- Listopad, S. (2025). *Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval.* arXiv:2509.09691. https://arxiv.org/abs/2509.09691
+Listopad (2025b) further extended this direction in a second paper on Phase-Coded Memory and Morphological Resonance, integrating resonance-based retrieval into inference loops — moving beyond static scoring toward dynamic phase-coded memory during generation. This represents the next logical step: not just retrieving by resonance, but reasoning through resonance.
+
+Sun et al. (2019) established with RotatE that modeling relations as rotations in complex space effectively captures symmetry, antisymmetry, inversion, and composition patterns in knowledge graphs. RotatE validates, from the knowledge graph embedding side, that rotational geometry on the unit circle is a natural substrate for encoding relational structure — the same mathematical insight this work arrives at from the database query side.
+
+- Listopad, S. (2025a). *Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval.* arXiv:2509.09691. https://arxiv.org/abs/2509.09691
+- Listopad, S. (2025b). *Phase-Coded Memory and Morphological Resonance.* arXiv:2511.11848. https://arxiv.org/abs/2511.11848
+- Sun, Z., Deng, Z.-H., Nie, J.-Y., & Tang, J. (2019). *RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space.* ICLR 2019. https://arxiv.org/abs/1902.10197
 - Wang, L. (2025). *Defierithos: The Lonely Warrior Rises from Resonance — A Self-Resonance Architecture Beyond Attention.* Submitted to NeurIPS 2025.
 
 ## Attribution

@@ -24,7 +24,7 @@ Consider a system where entities can be:
 
 In a traditional relational schema, each of these requires distinct tables, indexes, and query patterns. The combinatorial surface grows rapidly.
 
-Recent work by Listopad (2025) demonstrated that phase-aware scoring outperforms cosine similarity for relationship-sensitive retrieval in their ResonanceDB system [1]. Their approach validates the utility of resonance-based coherence as a retrieval operator. More radically, Wang (2025) proposed the Self-Resonance Field (SRF) architecture, which replaces transformer self-attention entirely with wave interference and phase superposition, using coherence estimation between spectral sub-bands rather than dot-product attention [2]. Their simulation results show improvements over GPT-4 Turbo across six benchmarks, providing independent evidence that wave mechanics can serve as a viable computational substrate for language modeling. The present work asks the foundational question underlying both directions: whether phase encoding and harmonic coherence can serve as the computational substrate itself — validated here through formal mathematical proofs on database queries, with the LLM application proposed as a hypothesis supported by these independent implementations.
+Recent work by Listopad (2025) demonstrated that phase-aware scoring outperforms cosine similarity for relationship-sensitive retrieval in their ResonanceDB system [1]. Their approach validates the utility of resonance-based coherence as a retrieval operator. More radically, Wang (2025) proposed the Self-Resonance Field (SRF) architecture, which replaces transformer self-attention entirely with wave interference and phase superposition, using coherence estimation between spectral sub-bands rather than dot-product attention [2]. Their simulation results show improvements over GPT-4 Turbo across six benchmarks, providing independent evidence that wave mechanics can serve as a viable computational substrate for language modeling. Listopad further extended this direction with Phase-Coded Memory and Morphological Resonance [3], integrating resonance-based retrieval into inference loops — moving beyond static scoring toward dynamic phase-coded memory during generation. In the knowledge graph domain, Sun et al. (2019) established with RotatE [4] that modeling relations as rotations in complex space effectively captures symmetry, antisymmetry, inversion, and composition patterns — validating that rotational geometry on the unit circle is a natural substrate for encoding relational structure. The present work asks the foundational question underlying all of these directions: whether phase encoding and harmonic coherence can serve as the computational substrate itself — validated here through formal mathematical proofs on database queries, with the LLM application proposed as a hypothesis supported by these independent implementations.
 
 ### 1.2 The Hypothesis
 
@@ -875,6 +875,10 @@ The hypothesis holds. The mathematical foundation and the structural properties 
 [1] Listopad, S. (2025). Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval. arXiv:2509.09691. https://arxiv.org/abs/2509.09691
 
 [2] Wang, L. (2025). Defierithos: The Lonely Warrior Rises from Resonance — A Self-Resonance Architecture Beyond Attention. Submitted to NeurIPS 2025.
+
+[3] Listopad, S. (2025). Phase-Coded Memory and Morphological Resonance. arXiv:2511.11848. https://arxiv.org/abs/2511.11848
+
+[4] Sun, Z., Deng, Z.-H., Nie, J.-Y., & Tang, J. (2019). RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space. In *Proceedings of the 7th International Conference on Learning Representations (ICLR 2019)*. https://arxiv.org/abs/1902.10197
 
 ---
 
