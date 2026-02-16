@@ -1046,6 +1046,20 @@ All three models generate coherent Shakespearean dialogue with correct character
 
 **Verdict:** PASS. Harmonic phase embeddings outperform standard random initialization (2.2% lower validation loss) and match baseline performance even when completely frozen (0.02% difference with 40,768 fewer trainable parameters). The geometric structure provided by `cos(n * theta)` is not merely a reasonable initialization — it is a sufficient embedding substrate for character-level language modeling. No tokens are required.
 
+#### Cross-Language Reproduction: Rust + Candle
+
+To verify that the results are framework-independent, the harmonic transformer experiment was reproduced in pure Rust using candle (HuggingFace's Rust ML framework). No Python, no PyTorch — the identical architecture (4 layers, 4 heads, 128 dim) trained on the same Tiny Shakespeare dataset, operating on raw characters without tokens.
+
+| Mode | Val Loss | Train Loss | Time |
+|---|---|---|---|
+| Baseline (random, trainable) | 3.3347 | 3.3079 | 574s |
+| Harmonic (phase-encoded, trainable) | **3.2760** | **3.2414** | 552s |
+| Frozen (phase-encoded, NOT trainable) | 3.3384 | 3.3037 | 540s |
+
+The pattern is identical to the Python results: harmonic outperforms baseline by **1.8%**, and frozen harmonic matches the fully-trained baseline (within 0.1%). The absolute loss values differ from the Python run because the Rust version used reduced iterations (500 vs 5000) and smaller batch size (32 vs 64) for CPU training, but the relative ordering and margins are consistent. This confirms the harmonic embedding advantage is a property of the mathematics, not of any particular framework.
+
+The Rust implementation is at `rust-transformer/src/main.rs` (~670 lines). Dependencies: `candle-core 0.8`, `candle-nn 0.8`, `rand 0.8`.
+
 ---
 
 ## 5. Discussion
@@ -1289,6 +1303,15 @@ python/
 ```
 Test 24 requires: `sentence-transformers`, `numpy`. Model: `all-MiniLM-L6-v2` (384 dimensions, ~80MB, auto-downloaded).
 Test 25 requires: `torch` (with CUDA for GPU training). Dataset: Tiny Shakespeare (~1MB, auto-downloaded).
+
+Test 25 cross-language reproduction in Rust:
+```
+rust-transformer/
+├── Cargo.toml                # candle-core 0.8, candle-nn 0.8, rand 0.8
+└── src/
+    └── main.rs               # Harmonic transformer in pure Rust (~670 lines)
+```
+Requires: Rust toolchain (edition 2021), internet connection for dataset download. Runs on CPU (no CUDA required).
 
 ## Appendix C: Raw Test Output
 

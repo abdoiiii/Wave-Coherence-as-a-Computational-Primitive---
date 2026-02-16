@@ -9,7 +9,7 @@ A validated mathematical framework that uses phase encoding on the unit circle a
 The framework includes:
 
 - **A geometric relationship catalog** — every structural relationship pattern discoverable on a phase circle, stripped of all domain-specific interpretation, expressed as pure mathematics
-- **A validation paper** — 20 tests, 4 corrective findings, all passing, with reproducible Rust code
+- **A validation paper** — 25 tests, 5 corrective findings, all passing, with reproducible Rust and Python code
 - **An architecture proposal** — applying wave mechanics as a substrate for LLM attention and knowledge representation
 
 ## Origin
@@ -52,6 +52,7 @@ We make no claim of having discovered new mathematics. The contribution, if any,
 | `python/` | Python translation of the full test suite (Python 3.10+, zero dependencies) |
 | `python/embedding_analysis.py` | Test 24: Harmonic structure analysis of real transformer embeddings (requires `sentence-transformers`) |
 | `python/harmonic_transformer.py` | Test 25: Character-level harmonic transformer — no tokens, pure geometry (requires `torch` with CUDA) |
+| `rust-transformer/` | Test 25 cross-language reproduction: harmonic transformer in pure Rust using candle (HuggingFace's Rust ML framework) |
 
 ## Reproduce the Validation
 
@@ -75,6 +76,15 @@ python run_tests.py
 Requires Python 3.10+. No external dependencies (uses only `math` from stdlib).
 
 Both versions produce identical results: 23 tests, all passing. Tests 24-25 run separately: `python/embedding_analysis.py` (real embedding analysis) and `python/harmonic_transformer.py` (character-level harmonic transformer).
+
+### Rust Harmonic Transformer (Test 25 reproduction)
+
+```bash
+cd rust-transformer
+cargo run --release
+```
+
+Requires Rust toolchain (edition 2021) and internet connection for dataset download. Trains on CPU using candle (HuggingFace's Rust ML framework). No Python, no PyTorch. Reproduces the Test 25 harmonic embedding results: harmonic outperforms baseline by 1.8%, frozen matches baseline.
 
 ### Expected Output
 
@@ -133,7 +143,7 @@ ALL TESTS PASSED
 
 **Test 24 confirms harmonic structure in real transformer embeddings.** Using `all-MiniLM-L6-v2` (384 dimensions), spectral coherence analysis reveals that real model embeddings contain per-frequency structure that cosine similarity destroys. Antonyms score **0.5789** cosine similarity vs synonyms at **0.6375** — nearly indistinguishable. But spectral variance (variance of per-band coherence) is **3x higher** for antonyms than synonyms, and **7x higher** for unrelated pairs. Different relationship types (hierarchical, functional, analogical) produce distinct spectral profiles — different shapes of coherence across frequency bands — that a single cosine score conflates. This bridges the gap from synthetic proof (Test 21) to real-world validation: the cosine similarity blindness phenomenon exists in production model vectors, not just constructed ones.
 
-**Test 25 proves harmonic embeddings outperform random initialization.** A character-level transformer (4 layers, 128 dim) trained on Shakespeare with three embedding modes: baseline (random Gaussian, trainable), harmonic (phase-encoded, trainable), and frozen (phase-encoded, NOT trainable). No tokenizer — raw characters mapped to phase angles. Harmonic outperforms baseline by **2.2%** on validation loss, leading at every checkpoint. The frozen model — with 40,768 fewer trainable parameters and zero gradient updates to embeddings — matches the fully-trained baseline to within **0.02%**. The geometric structure provided by `cos(n * theta)` is not merely a useful initialization. It is a sufficient embedding substrate. The model does not need to learn its embeddings; it needs them to be structured.
+**Test 25 proves harmonic embeddings outperform random initialization.** A character-level transformer (4 layers, 128 dim) trained on Shakespeare with three embedding modes: baseline (random Gaussian, trainable), harmonic (phase-encoded, trainable), and frozen (phase-encoded, NOT trainable). No tokenizer — raw characters mapped to phase angles. Harmonic outperforms baseline by **2.2%** on validation loss, leading at every checkpoint. The frozen model — with 40,768 fewer trainable parameters and zero gradient updates to embeddings — matches the fully-trained baseline to within **0.02%**. The geometric structure provided by `cos(n * theta)` is not merely a useful initialization. It is a sufficient embedding substrate. The model does not need to learn its embeddings; it needs them to be structured. **Cross-language reproduction in pure Rust** (candle framework, no Python/PyTorch) confirms identical pattern: harmonic outperforms by 1.8%, frozen matches baseline — the advantage is mathematical, not framework-dependent.
 
 **Five corrective findings tighten the design:**
 

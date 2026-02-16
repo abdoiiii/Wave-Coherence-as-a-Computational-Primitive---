@@ -931,6 +931,15 @@ python/
 Test 24 requires: `sentence-transformers`, `numpy`. Model: `all-MiniLM-L6-v2` (384 dimensions, ~80MB, auto-downloaded).
 Test 25 requires: `torch` (with CUDA for GPU training). Dataset: Tiny Shakespeare (~1MB, auto-downloaded).
 
+Test 25 cross-language reproduction in Rust:
+```
+rust-transformer/
+├── Cargo.toml                # candle-core 0.8, candle-nn 0.8, rand 0.8
+└── src/
+    └── main.rs               # Harmonic transformer in pure Rust (~670 lines)
+```
+Requires: Rust toolchain (edition 2021), internet connection for dataset download. Runs on CPU (no CUDA required).
+
 ## Appendix C: Raw Test Output
 
 ```
