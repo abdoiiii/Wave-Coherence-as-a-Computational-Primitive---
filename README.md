@@ -166,9 +166,12 @@ Listopad (2025b) further extended this direction in a second paper on Phase-Code
 
 Sun et al. (2019) established with RotatE that modeling relations as rotations in complex space effectively captures symmetry, antisymmetry, inversion, and composition patterns in knowledge graphs. RotatE validates, from the knowledge graph embedding side, that rotational geometry on the unit circle is a natural substrate for encoding relational structure — the same mathematical insight this work arrives at from the database query side.
 
+Moriya (2025) demonstrated with the Surface-Enhanced Coherence Transform (SECT) that decomposing aggregate coherence into surface and propagation components recovers physical structure that ensemble averaging destroys. His admissibility conditions for valid coherence kernels — Hermiticity, positive-definiteness, normalization, spectral scaling — provide the formal contract validated in Test 22 of the present work. The structural parallel is exact: his aggregate coherence loses information the same way cosine similarity does in Test 21, and his per-component decomposition recovers it the same way harmonic sweep does.
+
 - Listopad, S. (2025a). *Wave-Based Semantic Memory: A Phase-Aware Alternative to Vector Retrieval.* arXiv:2509.09691. https://arxiv.org/abs/2509.09691
 - Listopad, S. (2025b). *Phase-Coded Memory and Morphological Resonance.* arXiv:2511.11848. https://arxiv.org/abs/2511.11848
 - Sun, Z., Deng, Z.-H., Nie, J.-Y., & Tang, J. (2019). *RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space.* ICLR 2019. https://arxiv.org/abs/1902.10197
+- Moriya, T. (2025). *Surface-Enhanced Coherence Transform: A Framework for Structured Coherence Decomposition.* arXiv:2505.17754. https://arxiv.org/abs/2505.17754
 - Wang, L. (2025). *Defierithos: The Lonely Warrior Rises from Resonance — A Self-Resonance Architecture Beyond Attention.* Submitted to NeurIPS 2025.
 
 ## Attribution
