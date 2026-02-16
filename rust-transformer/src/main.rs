@@ -10,6 +10,43 @@
 //
 // Uses candle (HuggingFace's Rust ML framework) for tensor operations.
 // No Python. No PyTorch. Pure Rust.
+//
+// =============================================================================
+// Performance observations (i7-14700K, 20 cores / 28 threads, RTX 4070 Ti)
+// =============================================================================
+//
+// CPU-only (current default):
+//   - ~9.5 minutes per mode (3 modes = ~28 min total)
+//   - CPU utilization: ~25% average on 28 threads
+//   - GPU utilization: 0% (completely idle)
+//   - Memory: ~15.5 GB / 31.8 GB (training fits comfortably)
+//
+// Optimization opportunities for the community:
+//
+//   1. BATCH_SIZE: Increasing from 32 → 64 or 128 gives matrix multiplications
+//      more work to parallelize across cores. Larger batches = better CPU
+//      utilization. The 25% CPU usage suggests the matrices (128-dim, batch 32)
+//      are too small to saturate all 28 threads.
+//
+//   2. CUDA support: Change Cargo.toml to:
+//        candle-core = { version = "0.8", features = ["cuda"] }
+//        candle-nn = { version = "0.8", features = ["cuda"] }
+//      Requires CUDA toolkit installed. Expected speedup: 10-20x over CPU.
+//      The RTX 4070 Ti has 7,680 CUDA cores purpose-built for matrix ops.
+//
+//   3. MAX_ITERS: Currently 500 (quick test). Set to 5000 with EVAL_INTERVAL
+//      500 and EVAL_ITERS 200 for a full training run matching the Python
+//      version's results.
+//
+//   4. RAYON_NUM_THREADS: candle uses rayon for CPU parallelism. Setting
+//      RAYON_NUM_THREADS=28 (or your thread count) may help, though the
+//      real bottleneck is matrix size, not thread availability.
+//
+// Results (500 iters, batch 32, CPU):
+//   Baseline:  val loss 3.3347  (574s)
+//   Harmonic:  val loss 3.2760  (552s)  — 1.8% better
+//   Frozen:    val loss 3.3384  (540s)  — matches baseline
+// =============================================================================
 
 use candle_core::{DType, Device, IndexOp, Result, Tensor, D};
 use candle_nn::{
