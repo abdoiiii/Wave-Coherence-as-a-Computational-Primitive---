@@ -922,6 +922,13 @@ wave-test/
 
 Total: ~2700 lines of Rust, zero dependencies.
 
+Test 24 (real embedding analysis) is implemented separately in Python:
+```
+python/
+└── embedding_analysis.py    # Test 24: Real embedding harmonic analysis (~300 lines)
+```
+Requires: `sentence-transformers` (for model loading), `numpy` (for FFT and linear algebra). Model: `all-MiniLM-L6-v2` (384 dimensions, ~80MB, downloaded automatically on first run).
+
 ## Appendix C: Raw Test Output
 
 ```
@@ -950,7 +957,8 @@ Test 20: PASS  (Dynamic mutation: remove/insert/update, all queries correct thro
 Test 21: PASS  (Harmonic sweep: 5 planted relationships recovered, cosine similarity blind to all, 0 false positives)
 Test 22: PASS  (Kernel admissibility: symmetry, normalization, positive semi-definiteness, spectral scaling all verified)
 Test 23: PASS  (Fundamental harmonics: triadic→n=3, opposition→n=2, quadrant→n=4, noise→none)
+Test 24: PASS  (Real embeddings: spectral variance 3x syn/ant, 7x syn/unrel, cosine blind spot confirmed)
 
-=== RESULTS: 23 passed, 0 failed out of 23 ===
+=== RESULTS: 24 passed, 0 failed out of 24 ===
 ALL TESTS PASSED
 ```
