@@ -6,3 +6,4 @@ from tests.boundary import *
 from tests.scaling import *
 from tests.indexing import *
 from tests.sweep import *
+from tests.kernel import *

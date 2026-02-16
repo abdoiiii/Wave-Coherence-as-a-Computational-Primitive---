@@ -54,6 +54,10 @@ from tests.indexing import (
 from tests.sweep import (
     test_21_harmonic_sweep,
 )
+from tests.kernel import (
+    test_22_kernel_admissibility,
+    test_23_channel_energy,
+)
 
 
 def main():
@@ -93,6 +97,8 @@ def main():
         test_19_multi_attr_index,
         test_20_dynamic_mutation,
         test_21_harmonic_sweep,
+        test_22_kernel_admissibility,
+        test_23_channel_energy,
     ]:
         if test_fn():
             passed += 1

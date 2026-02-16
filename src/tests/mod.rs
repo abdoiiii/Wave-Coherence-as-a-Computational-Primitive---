@@ -6,6 +6,7 @@ mod boundary;
 mod scaling;
 mod indexing;
 mod sweep;
+mod kernel;
 
 pub use core_tests::*;
 pub use structural::*;
@@ -15,3 +16,4 @@ pub use boundary::*;
 pub use scaling::*;
 pub use indexing::*;
 pub use sweep::*;
+pub use kernel::*;

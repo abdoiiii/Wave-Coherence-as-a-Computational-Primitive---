@@ -977,10 +977,11 @@ wave-test/
 │       ├── boundary.rs      # Tests 14-16 (~180 lines)
 │       ├── scaling.rs       # Test 17 (~200 lines)
 │       ├── indexing.rs      # Tests 18-20 (~500 lines)
-│       └── sweep.rs         # Test 21 (~140 lines)
+│       ├── sweep.rs         # Test 21 (~140 lines)
+│       └── kernel.rs        # Tests 22-23 (~280 lines)
 ```
 
-Total: ~2400 lines of Rust, zero dependencies.
+Total: ~2700 lines of Rust, zero dependencies.
 
 ## Appendix C: Raw Test Output
 
@@ -1008,7 +1009,9 @@ Test 18: PASS  (Bucket index: all queries match full scan, ~13% selectivity at 1
 Test 19: PASS  (2D torus index: compound queries correct, multiplicative selectivity over 1D)
 Test 20: PASS  (Dynamic mutation: remove/insert/update, all queries correct throughout)
 Test 21: PASS  (Harmonic sweep: 5 planted relationships recovered, cosine similarity blind to all, 0 false positives)
+Test 22: PASS  (Kernel admissibility: symmetry, normalization, positive semi-definiteness, spectral scaling all verified)
+Test 23: PASS  (Fundamental harmonics: triadic→n=3, opposition→n=2, quadrant→n=4, noise→none)
 
-=== RESULTS: 21 passed, 0 failed out of 21 ===
+=== RESULTS: 23 passed, 0 failed out of 23 ===
 ALL TESTS PASSED
 ```

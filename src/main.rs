@@ -34,6 +34,8 @@ fn main() {
     if test_19_multi_attr_index() { passed += 1; } else { failed += 1; }
     if test_20_dynamic_mutation() { passed += 1; } else { failed += 1; }
     if test_21_harmonic_sweep() { passed += 1; } else { failed += 1; }
+    if test_22_kernel_admissibility() { passed += 1; } else { failed += 1; }
+    if test_23_channel_energy() { passed += 1; } else { failed += 1; }
 
     let total = passed + failed;
     println!("\n=== RESULTS: {passed} passed, {failed} failed out of {total} ===");
