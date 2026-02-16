@@ -1307,11 +1307,11 @@ Test 25 requires: `torch` (with CUDA for GPU training). Dataset: Tiny Shakespear
 Test 25 cross-language reproduction in Rust:
 ```
 rust-transformer/
-├── Cargo.toml                # candle-core 0.8, candle-nn 0.8, rand 0.8
+├── Cargo.toml                # candle-core 0.8, candle-nn 0.8, rand 0.9
 └── src/
     └── main.rs               # Harmonic transformer in pure Rust (~670 lines)
 ```
-Requires: Rust toolchain (edition 2021), internet connection for dataset download. Runs on CPU (no CUDA required).
+Requires: Rust toolchain (edition 2024), internet connection for dataset download. Runs on CPU (no CUDA required).
 
 ## Appendix C: Raw Test Output
 

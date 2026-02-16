@@ -84,7 +84,7 @@ cd rust-transformer
 cargo run --release
 ```
 
-Requires Rust toolchain (edition 2021) and internet connection for dataset download. Trains on CPU using candle (HuggingFace's Rust ML framework). No Python, no PyTorch. Reproduces the Test 25 harmonic embedding results: harmonic outperforms baseline by 1.8%, frozen matches baseline.
+Requires Rust toolchain (edition 2024) and internet connection for dataset download. Trains on CPU using candle (HuggingFace's Rust ML framework). No Python, no PyTorch. Reproduces the Test 25 harmonic embedding results: harmonic outperforms baseline by 1.8%, frozen matches baseline.
 
 ### Expected Output
 

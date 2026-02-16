@@ -938,7 +938,7 @@ rust-transformer/
 └── src/
     └── main.rs               # Harmonic transformer in pure Rust (~670 lines)
 ```
-Requires: Rust toolchain (edition 2021), internet connection for dataset download. Runs on CPU (no CUDA required).
+Requires: Rust toolchain (edition 2024), internet connection for dataset download. Runs on CPU (no CUDA required).
 
 ## Appendix C: Raw Test Output
 

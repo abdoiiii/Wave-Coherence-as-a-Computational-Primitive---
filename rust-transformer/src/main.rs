@@ -414,8 +414,8 @@ impl HarmonicGPT {
 
 #[allow(dead_code)]
 fn sample_from_probs(probs: &[f32]) -> usize {
-    let mut rng = rand::thread_rng();
-    let r: f32 = rng.gen();
+    let mut rng = rand::rng();
+    let r: f32 = rng.random();
     let mut cumsum = 0.0;
     for (i, &p) in probs.iter().enumerate() {
         cumsum += p;
@@ -501,14 +501,14 @@ impl Dataset {
             _ => panic!("Unknown split"),
         };
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let max_start = data.len() - BLOCK_SIZE - 1;
 
         let mut x_data = Vec::with_capacity(BATCH_SIZE * BLOCK_SIZE);
         let mut y_data = Vec::with_capacity(BATCH_SIZE * BLOCK_SIZE);
 
         for _ in 0..BATCH_SIZE {
-            let start = rng.gen_range(0..max_start);
+            let start = rng.random_range(0..max_start);
             x_data.extend_from_slice(&data[start..start + BLOCK_SIZE]);
             y_data.extend_from_slice(&data[start + 1..start + BLOCK_SIZE + 1]);
         }
