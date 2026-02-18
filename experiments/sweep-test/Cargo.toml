@@ -1,0 +1,7 @@
+[package]
+name = "harmonic-sweep-test"
+version = "0.1.0"
+edition = "2024"
+description = "Proof that cosine similarity is blind to harmonic structure in vectors, and a sweep method that recovers it"
+
+[dependencies]
