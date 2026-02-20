@@ -4,6 +4,10 @@
 
 ## What This Is
 
+I built a character-level transformer that uses harmonic phase encoding instead of learned embeddings. Each character gets a phase angle on the unit circle, embedded as [cos(theta), sin(theta), cos(2theta), sin(2theta), ...]. No tokenizer, no BPE.
+
+Three identical models trained on Shakespeare (4 layers, 128 dim, RTX 4070 Ti, ~10 min each): - Baseline (random Gaussian, trainable): val loss 1.5570 - Harmonic (phase-encoded, trainable): val loss 1.5223 (-2.2%) - Frozen (phase-encoded, NOT trainable): val loss 1.5567 (-0.02%) The frozen model has 40k fewer trainable parameters and zero gradient updates to embeddings. It matches the fully-trained baseline using pure geometry. This came out of a larger project (25 tests) validating harmonic coherence as a computational primitive. The chain: Test 21 proved cosine similarity is blind to harmonic structure → Test 24 confirmed real transformer embeddings contain that structure → Test 25 showed providing it from the start beats learning it from random noise. Repo has everything: Rust + Python test suites, the transformer script, two papers. python harmonic_transformer.py to reproduce.
+
 A validated mathematical framework that uses phase encoding on the unit circle and harmonic coherence as a universal relationship detection operator. A single function — `cos(n * (θ_a - θ_b))` — detects exact matches, harmonic families, oppositions, fuzzy proximity, and multi-type relationships, matching or exceeding the expressiveness of traditional WHERE and JOIN operations for relationship-dense queries.
 
 The framework includes:
